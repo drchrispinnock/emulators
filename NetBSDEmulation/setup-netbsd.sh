@@ -11,6 +11,10 @@ if [ -n "$1" ]; then
 	ARCH=$1
 fi
 
+if [ "$ARCH" = "macppc" ]; then
+	VERS=9.0	# 9.1 is broken for some reason
+fi
+
 if [ -n "$2" ]; then
 	VERS=$2
 fi
@@ -23,6 +27,10 @@ fi
 EMU=$ARCH
 if [ "$ARCH" = "amd64" ]; then
 	EMU="x86_64"
+fi
+
+if [ "$ARCH" = "macppc" ]; then
+	EMU="ppc"
 fi
 
 if [ "$ARCH" = "mac68k" ]; then
@@ -48,6 +56,11 @@ QEMUFLAGS="-m 256M -hda $IMAGE -cdrom "$ISO" -display curses -boot d -net user $
 
 # mac68k needs a kernel
 #QEMUFLAGS="$QEMUFLAGS -kernel netbsd-GENERIC.bz2"
+
+if [ "$ARCH" = "macppc" ]; then
+	echo "$ISO" > usemeasroot.txt
+	QEMUFLAGS="-prom-env "boot-device=cd:,\\ofwboot.xcf" -boot order=d -cdrom $ISO $IMAGE" # My terminal hangs in curses on nographic
+fi
 
 # sparc64
 if [ "$ARCH" = "sparc64" ]; then

@@ -18,6 +18,10 @@ if [ "$ARCH" = "sparc" ]; then
 	CURSES="-nographic"
 fi
 
+if [ "$ARCH" = "macppc" ]; then
+	CURSES="-nographic"
+fi
+
 if [ -n "$2" ]; then
 	CURSES=""
 fi
@@ -29,6 +33,10 @@ fi
 EMU=$ARCH
 if [ "$ARCH" = "amd64" ]; then
 	EMU="x86_64"
+fi
+
+if [ "$ARCH" = "macppc" ]; then
+	EMU="ppc"
 fi
 
 if [ ! -d "$TARGET/$ARCH" ]; then
@@ -46,6 +54,12 @@ IMAGE="netbsd-disk-$ARCH.img"
 
 # i386/amd64/default
 QEMUFLAGS="-m 256M -hda $IMAGE -net user -net nic"
+
+if [ "$ARCH" = "macppc" ]; then
+	ISO=`cat usemeasroot.txt`
+#	QEMUFLAGS="-prom-env boot-device=cd:,\\ofwboot.xcf\ -prom-env boot-file=netbsd -boot d -cdrom $ISO -hda $IMAGE"
+	QEMUFLAGS="-boot d -cdrom $ISO -net user -net nic $IMAGE"
+fi
 
 # Sparc/sun4m
 if [ "$ARCH" = "sparc" ]; then

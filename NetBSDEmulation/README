@@ -42,6 +42,7 @@ Sparc & Sparc64 information:
 https://virtuallyfun.com/wordpress/2015/01/14/netbsd-6-1-5-sparc64-on-qemu/
 * https://wiki.qemu.org/Documentation/Platforms/SPARC
 
+
 2. arm64
 
 * Use setup-arm64.sh to get the latest bits and pieces including 
@@ -50,4 +51,31 @@ to 10G
 * Use run-arm64.sh to run it. Inside the script you can change the
 graphics options easily if you prefer not to run headless
 
+3. macppc (beta)
+
+ * https://wiki.qemu.org/Documentation/Platforms/PowerPC
+
+ This is much more involved.
+ ./setup-netbsd.sh macppc  will get you booted into the installer.
+
+ You need to get a shell, partition the file to have an HFS partition
+ and a NetBSD partition. Eventually you can use the HFS partition to
+ boot.
+
+ Until then, ./run-netbsd.sh macppc will get you to an openboot prompt.
+ Type: boot cd:,\ofwboot.xcf netbsd
+
+ You will get a prompt:
+ Boot:
+
+ Type at this: netbsd.macppc root=/dev/wd0a
+
+ You will be able to confirm the root device and use the installation
+ on the hard disc. I've been unable to get the network interface to
+ work.
+
+ If I understood open firmware better, I might be able to persuade
+ run-netbsd.sh to boot off the CD and use /dev/wd0a as the root device
+ One way would be to create an iso image with the openbooter and
+ a kernel hardwired to wd0a.
 
