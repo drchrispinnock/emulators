@@ -25,6 +25,11 @@ if [ "$ARCH" = "amd64" ]; then
 	EMU="x86_64"
 fi
 
+if [ "$ARCH" = "mac68k" ]; then
+	EMU="m68k"
+	echo "mac68k is not supported">&2
+	exit 1
+fi
 
 # Make our directory
 mkdir -p "$TARGET/$ARCH"
@@ -40,6 +45,9 @@ URL="https://cdn.netbsd.org/pub/NetBSD/NetBSD-$VERS/images/$ISO"
 
 # i386, amd64
 QEMUFLAGS="-m 256M -hda $IMAGE -cdrom "$ISO" -display curses -boot d -net user $EXTRAFLAGS -net nic"
+
+# mac68k needs a kernel
+#QEMUFLAGS="$QEMUFLAGS -kernel netbsd-GENERIC.bz2"
 
 # sparc64
 if [ "$ARCH" = "sparc64" ]; then
