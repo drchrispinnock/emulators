@@ -13,8 +13,6 @@ QEMUFIRM="http://snapshots.linaro.org/components/kernel/leg-virt-tianocore-edk2-
 mkdir -p $TARGET
 cd $TARGET
 
-URL="https://cdn.netbsd.org/pub/NetBSD/NetBSD-$VERS/images/$ISO"
-
 curl -L --output arm64.img.gz $NETBSD
 curl -L --output QEMU_EFI.fd $QEMUFIRM
 

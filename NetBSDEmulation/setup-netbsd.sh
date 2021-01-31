@@ -6,22 +6,10 @@ ARCH=amd64
 VERS=9.1
 TARGET=$HOME/Qemu/NetBSD
 SIZE=10G
-CURSES="-display curses"
 
 if [ -n "$1" ]; then
 	ARCH=$1
 fi
-
-if [ "$ARCH" = "sparc" ]; then
-#	VERS="7.2" # 9.1 doesn't work
-
-	echo "do nothing"
-fi
-
-if [ "$ARCH" = "sparc64" ]; then
-	VERS="7.0" # 9.1 doesn't work
-fi
-
 
 if [ -n "$2" ]; then
 	VERS=$2
@@ -51,18 +39,16 @@ ISO=NetBSD-$VERS-$ARCH.iso
 URL="https://cdn.netbsd.org/pub/NetBSD/NetBSD-$VERS/images/$ISO"
 
 # i386, amd64
-QEMUFLAGS="-m 256M -hda $IMAGE -cdrom "$ISO" $CURSES -boot d -net user $EXTRAFLAGS -net nic"
+QEMUFLAGS="-m 256M -hda $IMAGE -cdrom "$ISO" -display curses -boot d -net user $EXTRAFLAGS -net nic"
 
-# sparc64 - under test
+# sparc64
 if [ "$ARCH" = "sparc64" ]; then
-	CURSES=""
-	QEMUFLAGS="-drive file=$IMAGE,if=scsi,bus=0,unit=0,media=disk -drive file=$ISO,format=raw,if=scsi,bus=0,unit=2,media=cdrom,readonly=on -device virtio-blk-pci,bus=pciB,drive=hd -boot d -nographic"
+	QEMUFLAGS="-drive file=$IMAGE,if=ide,bus=0,unit=0 -drive file=$ISO,format=raw,if=ide,bus=1,unit=0,media=cdrom,readonly=on -boot d -net user -net nic -nographic"
 fi
 
-# space
+# sparc
 if [ "$ARCH" = "sparc" ]; then
-	CURSES=""
-	QEMUFLAGS="-drive file=$IMAGE,if=scsi,bus=0,unit=0,media=disk -drive file=$ISO,format=raw,if=scsi,bus=0,unit=2,media=cdrom,readonly=on -boot d -nographic"
+	QEMUFLAGS="-drive file=$IMAGE,if=scsi,bus=0,unit=0,media=disk -drive file=$ISO,format=raw,if=scsi,bus=0,unit=2,media=cdrom,readonly=on -boot d -net user -net nic -nographic"
 fi
 
 if [ -f "$ISO" ]; then

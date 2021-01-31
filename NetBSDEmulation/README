@@ -3,9 +3,13 @@ These were developed on Mac OS/Big Sur with QEMU installed. And you should
 use at your own risk. No warranty. Anything that breaks, you get to
 mop up and keep all the pieces.
 
-You can install QEMU with homebrew. e.g. "brew install qemu"
+See also: https://chrispinnock.com/stuff/running-systems-in-qemu/
 
-1. i386 and amd64
+You can install QEMU with homebrew. e.g. "brew install qemu".
+Make sure you are running 5.2. There are issues on Sparc and Sparc64 in
+5.1.
+
+1. i386, amd64, sparc64
 
 * Use setup-netbsd.sh to setup your VM.
 
@@ -28,15 +32,15 @@ By default it will run amd64 from Qemu/NetBSD in
 command line curses more.
 
 ./run-netbsd.sh i386 blah
-
-will target i386 with normal graphics.
+will run i386 with normal graphics.
 
 You will need to set dhcpcd=YES in rc.conf. Then networking will work
 on boot.
 
+Sparc & Sparc64 information:
 * The sparc64 bit was based on work in this article:
 https://virtuallyfun.com/wordpress/2015/01/14/netbsd-6-1-5-sparc64-on-qemu/
-
+* https://wiki.qemu.org/Documentation/Platforms/SPARC
 
 2. arm64
 
