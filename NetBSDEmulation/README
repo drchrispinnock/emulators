@@ -9,8 +9,7 @@ You can install QEMU with homebrew.
 
 ./setup-netbsd.sh [arch [ver [target dir]]]
 
-By default it will install amd64 version 9.1 in
-/Volumes/Timemachine/Qemu/NetBSD/
+By default it will install amd64 version 9.1 in Qemu/NetBSD/
 It will attempt to download the ISO from NetBSD.org.
 
 Follow the installer. Once installed, a reboot will attempt to boot
@@ -23,7 +22,7 @@ Then:
 
 ./run-netbsd.sh [arch [curses [target dir]]]
 
-By default it will run amd64 from /Volumes/Timemachine/Qemu/NetBSD in
+By default it will run amd64 from Qemu/NetBSD in
 command line curses more.
 
 ./run-netbsd.sh i386 blah
