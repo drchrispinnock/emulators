@@ -38,8 +38,11 @@ IMAGE="netbsd-disk-$ARCH.img"
 
 if [ -f "$IMAGE" ]; then
 echo "Starting emulator"
+	if [ -n "$CURSES" ]; then
+		echo -n -e "\033]0;QEMU-NetBSD/$ARCH\007"
+	fi
 	qemu-system-$EMU -m 256M -hda $IMAGE -boot d -net nic -net user \
-		-display curses
+		$CURSES
 else
 	echo "No $IMAGE!"
 fi
