@@ -5,6 +5,8 @@ mop up and keep all the pieces.
 
 You can install QEMU with homebrew. e.g. "brew install qemu"
 
+1. i386 and amd64
+
 * Use setup-netbsd.sh to setup your VM.
 
 ./setup-netbsd.sh [arch [ver [target dir]]]
@@ -31,3 +33,17 @@ will target i386 with normal graphics.
 
 You will need to set dhcpcd=YES in rc.conf. Then networking will work
 on boot.
+
+* The sparc64 bit was based on work in this article:
+https://virtuallyfun.com/wordpress/2015/01/14/netbsd-6-1-5-sparc64-on-qemu/
+
+
+2. arm64
+
+* Use setup-arm64.sh to get the latest bits and pieces including 
+working firmware and root filesystem. This will also resize the filesystem
+to 10G
+* Use run-arm64.sh to run it. Inside the script you can change the
+graphics options easily if you prefer not to run headless
+
+
