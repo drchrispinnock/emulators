@@ -1,0 +1,34 @@
+
+These were developed on Mac OS/Big Sur with QEMU installed. And you should
+use at your own risk. No warranty. Anything that breaks, you get to
+mop up and keep all the pieces.
+
+You can install QEMU with homebrew.
+
+* Use setup-netbsd.sh to setup your VM.
+
+./setup-netbsd.sh [arch [ver [target dir]]]
+
+By default it will install amd64 version 9.1 in
+/Volumes/Timemachine/Qemu/NetBSD/
+It will attempt to download the ISO from NetBSD.org.
+
+Follow the installer. Once installed, a reboot will attempt to boot
+from the CD. If you go to a shell from the installer, issue 
+"shutdown -p now", the Qemu will exit along with the program. 
+
+Then:
+
+* Use run-netbsd.sh to run your VM under normal circumstances
+
+./run-netbsd.sh [arch [curses [target dir]]]
+
+By default it will run amd64 from /Volumes/Timemachine/Qemu/NetBSD in
+command line curses more.
+
+./run-netbsd.sh i386 blah
+
+will target i386 with normal graphics.
+
+You will need to set dhcpcd=YES in rc.conf. Then networking will work
+on boot.
