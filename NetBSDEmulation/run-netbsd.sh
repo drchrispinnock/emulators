@@ -45,7 +45,7 @@ fi
 IMAGE="netbsd-disk-$ARCH.img"
 
 # i386/amd64/default
-QEMUFLAGS="-m 256M -hda $IMAGE -cdrom $ISO -boot d -net user -net nic"
+QEMUFLAGS="-m 256M -hda $IMAGE -net user -net nic"
 
 # Sparc/sun4m
 if [ "$ARCH" = "sparc" ]; then

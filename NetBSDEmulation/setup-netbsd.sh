@@ -62,6 +62,7 @@ if [ -f "$IMAGE" ]; then
 else
 	qemu-img create -f raw "$IMAGE" $SIZE
 fi
+
 echo "Starting emulator"
 echo "qemu-system-$EMU $QEMUFLAGS"
 sleep 2
