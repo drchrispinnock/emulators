@@ -3,7 +3,7 @@ These were developed on Mac OS/Big Sur with QEMU installed. And you should
 use at your own risk. No warranty. Anything that breaks, you get to
 mop up and keep all the pieces.
 
-You can install QEMU with homebrew.
+You can install QEMU with homebrew. e.g. "brew install qemu"
 
 * Use setup-netbsd.sh to setup your VM.
 
