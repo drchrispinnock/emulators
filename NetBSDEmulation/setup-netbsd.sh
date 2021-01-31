@@ -4,7 +4,7 @@
 
 ARCH=amd64
 VERS=9.1
-TARGET=/Volumes/Timemachine/Qemu/NetBSD
+TARGET=$HOME/Qemu/NetBSD
 SIZE=10G
 
 if [ -n "$1" ]; then

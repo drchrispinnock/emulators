@@ -4,7 +4,7 @@
 
 ARCH=amd64
 CURSES="-display curses"
-TARGET=/Volumes/Timemachine/Qemu/NetBSD
+TARGET=$HOME/Qemu/NetBSD
 
 if [ -n "$1" ]; then
 	ARCH=$1
