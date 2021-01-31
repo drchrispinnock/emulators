@@ -2,10 +2,9 @@
 
 # Setup a FreeBSD emulator from scratch
 #
-
-
 ARCH=amd64
-VERS=12.2-RELEASE
+REL=12.2
+VERS=$REL-RELEASE
 TARGET=$HOME/Qemu/FreeBSD
 SIZE=10G
 VMIMAGE=0 # Several architectures provide a VM image.
@@ -41,12 +40,6 @@ if [ "$ARCH" = "macppc" ]; then
 	EMU="ppc"
 fi
 
-if [ "$ARCH" = "mac68k" ]; then
-	EMU="m68k"
-	echo "mac68k is not supported">&2
-	exit 1
-fi
-
 # Make our directory
 mkdir -p "$TARGET/$ARCH"
 cd "$TARGET/$ARCH"
@@ -55,25 +48,18 @@ if [ "$?" != "0" ]; then
 	exit 1
 fi
 
-IMAGE="netbsd-disk-$ARCH.img"
-ISO=NetBSD-$VERS-$ARCH.iso
-URL="https://cdn.netbsd.org/pub/NetBSD/NetBSD-$VERS/images/$ISO"
+IMAGE="freebsd-disk-$ARCH.img"
+ISO=FreeBSD-$VERS-$ARCH-disc1.iso
+VM=FreeBSD-$VERS-$ARCH.qcow2
+
+BASEURL="https://download.freebsd.org/ftp/releases
+ISOURL="$BASEURL/$ARCH/$ARCH/ISO-IMAGES/$REL.xz"
+VMURL="$BASEURL/VM-IMAGES/$VERS/$ARCH/Latest/$VM.xz"
 
 # i386, amd64
 QEMUFLAGS="-m 256M -hda $IMAGE -cdrom "$ISO" -display curses -boot d -net user $EXTRAFLAGS -net nic"
 
-# mac68k needs a kernel
-#QEMUFLAGS="$QEMUFLAGS -kernel netbsd-GENERIC.bz2"
-
-# sparc64
-if [ "$ARCH" = "sparc64" ]; then
-	QEMUFLAGS="-drive file=$IMAGE,if=ide,bus=0,unit=0 -drive file=$ISO,format=raw,if=ide,bus=1,unit=0,media=cdrom,readonly=on -boot d -net user -net nic -nographic"
-fi
-
-# sparc
-if [ "$ARCH" = "sparc" ]; then
-	QEMUFLAGS="-drive file=$IMAGE,if=scsi,bus=0,unit=0,media=disk -drive file=$ISO,format=raw,if=scsi,bus=0,unit=2,media=cdrom,readonly=on -boot d -net user -net nic -nographic"
-fi
+if [ -f "$VM
 
 if [ -f "$ISO" ]; then
 	echo "Using $ISO"

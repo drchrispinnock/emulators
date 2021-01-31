@@ -1,13 +1,19 @@
 #!/bin/sh
 
-# Run OpenBSD emulator 
+# Run emulator 
 
+OS=NetBSD
 ARCH=amd64
 CURSES="-display curses"
-TARGET=$HOME/Qemu/OpenBSD
 
 if [ -n "$1" ]; then
-	ARCH=$1
+	OS=$1
+fi
+LOWER=`echo $OS | awk '{print tolower($0)}'`
+TARGET=$HOME/Qemu/$OS
+
+if [ -n "$2" ]; then
+	ARCH=$2
 fi
 
 if [ "$ARCH" = "sparc64" ]; then
@@ -18,17 +24,25 @@ if [ "$ARCH" = "sparc" ]; then
 	CURSES="-nographic"
 fi
 
-if [ -n "$2" ]; then
-	CURSES=""
+if [ "$ARCH" = "macppc" ]; then
+	CURSES="-nographic"
 fi
 
 if [ -n "$3" ]; then
-	TARGET=$3
+	CURSES=""
+fi
+
+if [ -n "$4" ]; then
+	TARGET=$4
 fi
 
 EMU=$ARCH
 if [ "$ARCH" = "amd64" ]; then
 	EMU="x86_64"
+fi
+
+if [ "$ARCH" = "macppc" ]; then
+	EMU="ppc"
 fi
 
 if [ ! -d "$TARGET/$ARCH" ]; then
@@ -42,10 +56,16 @@ if [ "$?" != "0" ]; then
 	exit 1
 fi
 
-IMAGE="openbsd-disk-$ARCH.img"
+IMAGE="$LOWER-disk-$ARCH.img"
 
 # i386/amd64/default
 QEMUFLAGS="-m 256M -hda $IMAGE -net user -net nic"
+
+if [ "$ARCH" = "macppc" ]; then
+	ISO=`cat usemeasroot.txt`
+#	QEMUFLAGS="-prom-env boot-device=cd:,\\ofwboot.xcf\ -prom-env boot-file=netbsd -boot d -cdrom $ISO -hda $IMAGE"
+	QEMUFLAGS="-boot d -cdrom $ISO -net user -net nic $IMAGE"
+fi
 
 # Sparc/sun4m
 if [ "$ARCH" = "sparc" ]; then
@@ -62,7 +82,7 @@ if [ -f "$IMAGE" ]; then
 	echo "Starting emulator"
 
 	if [ -n "$CURSES" ]; then
-		echo -n -e "\033]0;QEMU-OpenBSD/$ARCH\007"
+		echo -n -e "\033]0;QEMU-$OS/$ARCH\007"
 	fi
 
 	echo "qemu-system-$EMU $QEMUFLAGS $CURSES"

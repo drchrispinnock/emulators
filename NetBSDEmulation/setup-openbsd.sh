@@ -13,8 +13,9 @@ if [ -n "$1" ]; then
 	ARCH=$1
 fi
 
-if [ "$ARCH" != "amd64" ] && [ "$ARCH" != "i386" ] && \
-		[ "$ARCH" != "sparc" ] && [ "$ARCH" != "sparc64" ]; then
+if [ "$ARCH" != "amd64" ] && \
+		[ "$ARCH" != "i386" ] && \
+		 [ "$ARCH" != "sparc64" ]; then
 		echo "Unchecked architecture">&2
 		exit 1
 fi
