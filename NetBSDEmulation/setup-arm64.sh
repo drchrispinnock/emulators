@@ -15,8 +15,8 @@ cd $TARGET
 
 URL="https://cdn.netbsd.org/pub/NetBSD/NetBSD-$VERS/images/$ISO"
 
-curl --output arm64.img.gz $NETBSD
-curl --output QEMU_EFI.fd $QEMUFIRM
+curl -L --output arm64.img.gz $NETBSD
+curl -L --output QEMU_EFI.fd $QEMUFIRM
 
 gunzip arm64.img.gz
 qemu-img resize arm64.img $SIZE

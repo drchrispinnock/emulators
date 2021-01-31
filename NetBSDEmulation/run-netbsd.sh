@@ -23,6 +23,10 @@ if [ "$ARCH" = "amd64" ]; then
 	EMU="x86_64"
 fi
 
+if [ "$ARCH" = "sparc64" ]; then
+	CURSES=""
+fi
+
 if [ ! -d "$TARGET/$ARCH" ]; then
 	echo "Emulator not installed where I expect!">&2
 	exit 1
