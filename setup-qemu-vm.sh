@@ -7,6 +7,7 @@
 # Supported architectures
 # NetBSD - amd64, i386, sparc, sparc64, macppc
 # OpenBSD - amd64, i386, sparc64
+# FreeBSD - i386
 
 # Usage: $0 [[[[[OS] Arch] NOGUI] Size] Target Dir]
 # e.g.
@@ -21,7 +22,7 @@ FREEBSDCDN="https://download.freebsd.org/ftp/releases"
 DEBUG=1
 OS=NetBSD
 ARCH=amd64
-SIZE=10G
+SIZE=8G
 
 # Get the OS from the command-line
 #
@@ -103,8 +104,24 @@ case $OS in
 				;;
 		esac
 		;;
+		FreeBSD)
+	  	VERS=12.2
+			case $ARCH in
+			i386|sparc64)
+					# Supported for FreeBSD
+					;;
+				amd64)
+					EMU="x86_64"
+					;;
+				*)
+					echo "$OS/$ARCH not supported">&2
+					exit 1
+					;;
+			esac
+			;;
+		
   *)
-		echo "OS: $OS not supported (yet)">&2
+		echo "Supported OSes: NetBSD, OpenBSD, FreeBSD">&2
 		exit 1
 		;;
 esac
@@ -117,6 +134,7 @@ fi
 case $OS in
 	NetBSD)
 		ISO=$OS-$VERS-$ARCH.iso
+
 		REMOTEISO=$ISO
 		if [ "$ARCH" = "mips64el" ]; then
 			REMOTEISO=$OS-$VERS-evbmips-mips64el.iso
@@ -130,6 +148,11 @@ case $OS in
 		
 		URL="$OPENBSDCDN/$VERS/$ARCH/$ISO"
 		;;
+	FreeBSD)
+		ISO="FreeBSD-$VERS-RELEASE-$ARCH-disc1.iso"
+		URL="$FREEBSDCDN/$ARCH/$ARCH/ISO-IMAGES/$VERS/$ISO"
+
+		;;
    *)
 	 	echo "Should not be reached!" > 2&1
 		exit 1
@@ -142,7 +165,7 @@ if [ -n "$4" ]; then
 fi
 
 if [ -n "$5" ]; then
-	TARGET=$5/$OS
+	TARGET="$5/$OS"
 fi
 
 if [ "$DEBUG" = "1" ]; then
@@ -192,8 +215,11 @@ if [ -f "$ISO" ]; then
   echo "Using existing $ISO file">&2
 else
   echo "Downloading $ISO">&2
+	
 	echo "curl --location --output \"$ISO\" \"$URL\""
-	curl --location --output $ISO $URL
+	
+	curl --location --output $ISO "$URL"
+	
 fi
 
 if [ -f "$IMAGE" ]; then
@@ -208,3 +234,6 @@ echo "qemu-system-$EMU $QEMUFLAGS"
 sleep 2
 qemu-system-$EMU $QEMUFLAGS
 
+# FreeBSD also has VM images
+#VM=FreeBSD-$VERS-$ARCH.qcow2
+#VMURL="$BASEURL/VM-IMAGES/$VERS/$ARCH/Latest/$VM.xz"

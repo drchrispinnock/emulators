@@ -33,6 +33,20 @@ by exiting the installer and using "shutdown -p now".
 
 With no options you get NetBSD/amd64.
 
+Supported: 
+* NetBSD/amd64, i386, sparc, sparc64
+* OpenBSD/amd64, i386, sparc64
+* FreeBSD/i386, sparc64,
+
+Boots with caveats (see below):
+* NetBSD/macppc 
+* FreeBSD/sparc64
+
+If the ISO file is already present, it will use it.
+If the hard disc image is already present, it will use it.
+In theory, it should be possible to use this script to upgrade the OS
+in the VM.
+
 ------------------------------------------------------------------------
 The run script. 
 ------------------------------------------------------------------------
@@ -80,6 +94,13 @@ working firmware and root filesystem. This will also resize the filesystem
 to 10G
 * Use run-arm64.sh to run it. Inside the script you can change the
 graphics options easily if you prefer not to run headless
+
+------------------------------------------------------------------------
+FreeBSD/sparc64 12.2
+------------------------------------------------------------------------
+
+* Installs and boots, but I'm seeing segmentation faults for sshd and
+sendmail programmes during boot.
 
 ------------------------------------------------------------------------
 References:
