@@ -2,6 +2,11 @@
 
 # Setup a BSD emulator from scratch
 #
+# Chris Pinnock Feb/2021 - No Warranty - Use at your own risk!
+#
+# Supported architectures
+# NetBSD - amd64, i386, sparc, sparc64, macppc
+# OpenBSD - amd64, i386, sparc64
 
 # Usage: $0 [[[[[OS] Arch] NOGUI] Size] Target Dir]
 # e.g.
@@ -10,6 +15,7 @@
 # CDNs
 NETBSDCDN="https://cdn.netbsd.org/pub/NetBSD"
 OPENBSDCDN="https://cloudflare.cdn.openbsd.org/pub/OpenBSD"
+FREEBSDCDN="https://download.freebsd.org/ftp/releases"
 
 # Defaults
 DEBUG=1
@@ -33,7 +39,11 @@ if [ -n "$2" ]; then
 fi
 
 EMU=$ARCH
-CURSES="-display curses" # -nographic?
+
+# brew version seems to support curses. Perhaps need to recompile
+# -nographic doesn't work with NetBSD 
+#CURSES="-display curses"
+CURSES=""
 
 IMAGE="$LOWEROS-disk-$ARCH.img"
 # Fix depending on OS and arch
@@ -94,7 +104,7 @@ case $OS in
 		esac
 		;;
   *)
-		echo "$OS not supported (yet)">&2
+		echo "OS: $OS not supported (yet)">&2
 		exit 1
 		;;
 esac
@@ -179,10 +189,11 @@ case $ARCH in
 esac
 
 if [ -f "$ISO" ]; then
-	echo "Using existing $ISO file">&2
+  echo "Using existing $ISO file">&2
 else
-	echo "Downloading $ISO">&2
-	curl -L --output "$ISO" $URL
+  echo "Downloading $ISO">&2
+	echo "curl --location --output \"$ISO\" \"$URL\""
+	curl --location --output $ISO $URL
 fi
 
 if [ -f "$IMAGE" ]; then

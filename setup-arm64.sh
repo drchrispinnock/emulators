@@ -18,5 +18,5 @@ curl -L --output QEMU_EFI.fd $QEMUFIRM
 
 gunzip arm64.img.gz
 qemu-img resize arm64.img $SIZE
-
+mv arm64.img netbsd-disk-arm64.img
 
