@@ -7,7 +7,7 @@
 # Supported architectures
 # NetBSD - amd64, i386, sparc, sparc64, macppc
 # OpenBSD - amd64, i386, sparc64
-# FreeBSD - i386
+# FreeBSD - i386, amd64, sparc64
 
 # Usage: $0 [[[[[OS] Arch] NOGUI] Size] Target Dir]
 # e.g.
@@ -65,6 +65,7 @@ case $OS in
 			macppc)
 				EMU="ppc"
 				VERS=9.0	# 9.1 is broken for some reason
+				OFWBOOT="-prom-env boot-device=cd:,\\ofwboot.xcf"
 				echo "Warning: macppc needs attention at boot time after install">&2
 				echo "Warning: 9.1 does not work (uses 9.0 by default)">&2
 				;;
@@ -94,9 +95,10 @@ case $OS in
 				;;
 			macppc)
 				EMU="ppc"
-			
+				OFWBOOT="-prom-env boot-device=cd:,ofwboot -prom-env boot-file=/$VERS/macppc/bsd.rd"
 				echo "Warning: macppc needs attention at boot time after install">&2
-				echo "Warning: testing!!! ">&2
+				echo "FATAL: 6.7/6.8 don't properly - they boot and panic)">&2
+				exit 1
 				;;
 			*)
 				echo "$OS/$ARCH not supported">&2
@@ -194,7 +196,8 @@ case $ARCH in
   macppc)
 	# I need the ISO to boot from after installation
 	echo "$ISO" > usemeasroot.txt
-	QEMUFLAGS="-prom-env "boot-device=cd:,\\ofwboot.xcf" -boot order=d -cdrom $ISO $IMAGE" 
+	QEMUFLAGS="$OFWBOOT -boot order=d -cdrom $ISO $IMAGE" 
+	
 	# My terminal hangs in curses on nographic, I've left it off
   ;;
 

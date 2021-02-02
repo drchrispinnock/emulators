@@ -42,6 +42,9 @@ Boots with caveats (see below):
 * NetBSD/macppc 
 * FreeBSD/sparc64
 
+Does not work:
+* OpenBSD/macppc - can get it to the bootloader but it panics staightaway
+
 If the ISO file is already present, it will use it.
 If the hard disc image is already present, it will use it.
 In theory, it should be possible to use this script to upgrade the OS
