@@ -31,7 +31,7 @@ case $ARCH in
 	;;
 	
 	amd64)
-		EMC="x86_64"
+		EMU="x86_64"
 		QEMUFLAGS="-m 256M -hda $IMAGE -net user -net nic"
 		;;
 		i386)
