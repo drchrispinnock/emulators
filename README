@@ -36,7 +36,7 @@ With no options you get NetBSD/amd64.
 Supported: 
 * NetBSD/amd64, i386, sparc, sparc64
 * OpenBSD/amd64, i386, sparc64
-* FreeBSD/i386, sparc64,
+* FreeBSD/i386, amd64
 
 Boots with caveats (see below):
 * NetBSD/macppc 
