@@ -5,45 +5,75 @@ mop up and keep all the pieces.
 
 See also: https://chrispinnock.com/stuff/running-systems-in-qemu/
 
-You can install QEMU with homebrew. e.g. "brew install qemu".
-Make sure you are running 5.2. There are issues on Sparc and Sparc64 in
-5.1.
+You can install QEMU with Homebrew. e.g. "brew install qemu".
+Or you can install it from the sources. It builds fine on Mac OS/Big Sur
+provided you installed Ninja first.
 
-1. i386, amd64, sparc64, sparc
+Issues:
 
-* Use setup-netbsd.sh to setup your VM.
+1. Make sure you are running Qemu >=5.2 if you want to run Sparc/Sparc64. I cannot get these to boot on 5.1.
 
-./setup-netbsd.sh [arch [ver [target dir]]]
+2. I am not sure, but I think there is a bug in Qemu 5.2. I've built it from
+scratch and used the Homebrew binaries. Large FTP transfers get interrupted.
+This happens on all the architectures and both Net and OpenBSD. It could
+be a bug on Qemu on Mac.
 
-By default it will install amd64 version 9.1 in Qemu/NetBSD/
-It will attempt to download the ISO from NetBSD.org.
+-------------------------------------------------------------------------
+The setup script. 
+-------------------------------------------------------------------------
 
-Follow the installer. Once installed, a reboot will attempt to boot
-from the CD. If you go to a shell from the installer, issue 
-"shutdown -p now", the Qemu will exit along with the program. 
+./setup-qemu-vm.sh [OS [arch [ver [... other opts]]]]
+
+This script sets up a VM image file in $HOME/QEmu/$OS, downloads the 
+installer ISO and boots the VM into the installer. You can then
+customise the installer to get the VM you want.
+
+Once you've finished it is best to power down the VM. I usually do this
+by exiting the installer and using "shutdown -p now".
+
+With no options you get NetBSD/amd64.
+
+------------------------------------------------------------------------
+The run script. 
+------------------------------------------------------------------------
 
 Then:
 
-* Use run-netbsd.sh to run your VM under normal circumstances
+./run-qemu-vm.sh [OS [arch [curses [other opts]]]]
 
-./run-netbsd.sh [arch [curses [target dir]]]
+will run the VM that you have setup previously.
 
-By default it will run amd64 from Qemu/NetBSD in
-command line curses more.
+By default it will run an amd64 VM (provided it has been setup).
 
-./run-netbsd.sh i386 blah
-will run i386 with normal graphics.
-
+------------------------------------------------------------------------
+For NetBSD:
+------------------------------------------------------------------------
 You will need to set dhcpcd=YES in rc.conf. Then networking will work
 on boot.
 
-Sparc & Sparc64 information:
-* The sparc64 bit was based on work in this article:
-https://virtuallyfun.com/wordpress/2015/01/14/netbsd-6-1-5-sparc64-on-qemu/
-* https://wiki.qemu.org/Documentation/Platforms/SPARC
+------------------------------------------------------------------------
+NetBSD/Macppc
+------------------------------------------------------------------------
 
+I can get this to boot, but the network interface doesn't work.
 
-2. arm64
+The setup script will get you booted into the installer. You may want
+to partition the filesystem to have an HFS partition which later you
+can setup to boot from. For this you will need hfstools.
+
+The run script will drop to a Boot prompt. You can boot by typing:
+netbsd.macppc -a
+
+The -a will instruct netbsd to ask you for the root filesystem - use wd0a
+ 
+The run script needs the iso to be present on the filesystem.
+
+You could put a kernel and OpenFirmware boot program on an iso image and
+use this instead. 
+
+------------------------------------------------------------------------
+NetBSD/arm64
+------------------------------------------------------------------------
 
 * Use setup-arm64.sh to get the latest bits and pieces including 
 working firmware and root filesystem. This will also resize the filesystem
@@ -51,31 +81,12 @@ to 10G
 * Use run-arm64.sh to run it. Inside the script you can change the
 graphics options easily if you prefer not to run headless
 
-3. macppc (beta)
+------------------------------------------------------------------------
+References:
+------------------------------------------------------------------------
+The sparc64 bit was based on work in this article:
+* https://virtuallyfun.com/wordpress/2015/01/14/netbsd-6-1-5-sparc64-on-qemu/
+* https://wiki.qemu.org/Documentation/Platforms/SPARC
 
- * https://wiki.qemu.org/Documentation/Platforms/PowerPC
-
- This is much more involved.
- ./setup-netbsd.sh macppc  will get you booted into the installer.
-
- You need to get a shell, partition the file to have an HFS partition
- and a NetBSD partition. Eventually you can use the HFS partition to
- boot.
-
- Until then, ./run-netbsd.sh macppc will get you to an openboot prompt.
- Type: boot cd:,\ofwboot.xcf netbsd
-
- You will get a prompt:
- Boot:
-
- Type at this: netbsd.macppc root=/dev/wd0a
-
- You will be able to confirm the root device and use the installation
- on the hard disc. I've been unable to get the network interface to
- work.
-
- If I understood open firmware better, I might be able to persuade
- run-netbsd.sh to boot off the CD and use /dev/wd0a as the root device
- One way would be to create an iso image with the openbooter and
- a kernel hardwired to wd0a.
-
+This was helpful for MacPPC:
+* https://wiki.qemu.org/Documentation/Platforms/PowerPC
