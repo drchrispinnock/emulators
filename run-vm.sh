@@ -4,13 +4,14 @@
 
 OS=NetBSD
 ARCH=amd64
-CURSES="-display curses"
+CURSES="-nographic"
 
 if [ -n "$1" ]; then
 	OS=$1
 fi
 LOWER=`echo $OS | awk '{print tolower($0)}'`
 TARGET=$HOME/Qemu/$OS
+echo $TARGET
 
 if [ -n "$2" ]; then
 	ARCH=$2
@@ -63,8 +64,8 @@ QEMUFLAGS="-m 256M -hda $IMAGE -net user -net nic"
 
 if [ "$ARCH" = "macppc" ]; then
 	ISO=`cat usemeasroot.txt`
-#	QEMUFLAGS="-prom-env boot-device=cd:,\\ofwboot.xcf\ -prom-env boot-file=netbsd -boot d -cdrom $ISO -hda $IMAGE"
-	QEMUFLAGS="-boot d -cdrom $ISO -net user -net nic $IMAGE"
+#	QEMUFLAGS="-prom-env boot-device=cd:,\\ofwboot.xcf\ -prom-env boot-file=netbsd.macppc -prom-env boot-args=-a -boot d -cdrom $ISO -hda $IMAGE" # - we need a CD image with the kernel & booted on it for this
+	QEMUFLAGS="-boot d -prom-env boot-device=cd:,\\ofwboot.xcf -prom-env boot-file=notfound -cdrom $ISO -net user -net nic $IMAGE"
 fi
 
 # Sparc/sun4m
