@@ -41,6 +41,7 @@ Supported:
 Boots with caveats (see below):
 * NetBSD/macppc 
 * FreeBSD/sparc64
+* Debian/amd64 - sort of works...
 
 Does not work:
 * OpenBSD/macppc - can get it to the bootloader but it panics staightaway
