@@ -73,8 +73,6 @@ on boot.
 NetBSD/Macppc
 ------------------------------------------------------------------------
 
-I can get this to boot, but the network interface doesn't work.
-
 The setup script will get you booted into the installer. You may want
 to partition the filesystem to have an HFS partition which later you
 can setup to boot from. For this you will need hfstools.
@@ -88,6 +86,10 @@ The run script needs the iso to be present on the filesystem.
 
 You could put a kernel and OpenFirmware boot program on an iso image and
 use this instead. 
+
+DHCP will not work (I think due to the lack of BPF on the interface) -
+you can setup a static IP. e.g. 10.0.2.100/255.255.255.0 gateway 10.0.2.2
+and DNS 10.0.2.3.
 
 ------------------------------------------------------------------------
 NetBSD/arm64
