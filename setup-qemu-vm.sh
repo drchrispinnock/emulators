@@ -17,12 +17,14 @@
 NETBSDCDN="https://cdn.netbsd.org/pub/NetBSD"
 OPENBSDCDN="https://cloudflare.cdn.openbsd.org/pub/OpenBSD"
 FREEBSDCDN="https://download.freebsd.org/ftp/releases"
+DEBIANCDN="https://cdimage.debian.org/debian-cd/current/"
 
 # Defaults
 DEBUG=1
 OS=NetBSD
 ARCH=amd64
 SIZE=8G
+MEMORY=256M
 
 # Get the OS from the command-line
 #
@@ -121,6 +123,19 @@ case $OS in
 					;;
 			esac
 			;;
+		Debian)
+		VERS=10.7.0
+			case $ARCH in
+				amd64)
+					# Debian
+					EMU="x86_64"
+					;;
+				*)
+					echo "$OS/$ARCH not supported">&2
+					exit 1
+					;;
+			esac
+			;;
 		
   *)
 		echo "Supported OSes: NetBSD, OpenBSD, FreeBSD">&2
@@ -155,6 +170,11 @@ case $OS in
 		URL="$FREEBSDCDN/$ARCH/$ARCH/ISO-IMAGES/$VERS/$ISO"
 
 		;;
+	Debian)
+		MEMORY=512M
+		ISO=debian-$VERS-$ARCH-netinst.iso
+		URL="$DEBIANCDN/$ARCH/iso-cd/$ISO"
+		;;
    *)
 	 	echo "Should not be reached!" > 2&1
 		exit 1
@@ -187,7 +207,7 @@ fi
 
 case $ARCH in
 	i386|amd64)
-	QEMUFLAGS="-m 256M -hda $IMAGE -cdrom "$ISO" $CURSES -boot d -net user -net nic"
+	QEMUFLAGS="-m $MEMORY -hda $IMAGE -cdrom "$ISO" $CURSES -boot d -net user -net nic"
   ;;
 #  mac68k)
 #  QEMUFLAGS="$QEMUFLAGS -kernel netbsd-GENERIC.bz2"
