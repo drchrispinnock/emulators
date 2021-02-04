@@ -57,8 +57,8 @@ case $OS in
 			i386|sparc64|sparc)
 				# Supported for NetBSD
 				;;
-#			arc)
-#			  EMU="mips64el"
+#  	arc)
+#		  EMU="mips64" or el?
 #				;;
 			amd64)
 				EMU="x86_64"
@@ -81,6 +81,11 @@ case $OS in
 				echo "Warning: Does not work currently">&2
 				CURSES="-nographic"
 				;;
+#			prep)
+#				EMU="ppc"
+#				MEMORY="192M"
+#				OFWBOOT="-prom-env auto-boot?=false"
+#			  ;;
 			*)
 				echo "$OS/$ARCH not supported">&2
 				exit 1
@@ -259,9 +264,9 @@ if [ "$?" != "0" ]; then
 fi
 
 case $ARCH in
-#	arc)
-#	QEMUFLAGS="-machine magnum -m $MEMORY -hda $IMAGE -cdrom "$ISO" $CURSES -boot d -net user -net nic -nographic"
-#	;;
+#  arc)
+#  QEMUFLAGS="-machine magnum -m $MEMORY -hda $IMAGE -cdrom "$ISO" $CURSES -boot d -net user -net nic"
+#  ;;
 	i386|amd64)
 	QEMUFLAGS="-m $MEMORY -hda $IMAGE -cdrom "$ISO" $CURSES -boot d -net user -net nic"
   ;;
@@ -269,6 +274,9 @@ case $ARCH in
 #  QEMUFLAGS="$QEMUFLAGS -kernel netbsd-GENERIC.bz2"
 # ;;
 
+#  prep)
+#	QEMUFLAGS="$OFWBOOT -M 40p -m $MEMORY -hda $IMAGE -fda sysinst.fs -cdrom "$ISO" $CURSES -boot c -net user -net nic -nographic"
+#	;;
   macppc|powerpc)
 	
 	# I need the ISO to boot from after installation
