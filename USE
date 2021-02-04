@@ -8,5 +8,6 @@ sparc		qemu
 macppc		qemu
 
 pmax		gxemul
+cats		gxemul
 
 vax		simh

@@ -7,7 +7,11 @@ See also: https://chrispinnock.com/stuff/running-systems-in-qemu/
 
 Gxemul
 ------
-This builds nicely from sources on Mac OS X. 
+This builds nicely from sources on Mac OS X. You will need X11 (e.g.
+XQuartz).
+* NetBSD/pmax 
+
+* NetBSD/cats - boots but panics during base.tgz extract
 
 
 Simh & NetBSD/vax

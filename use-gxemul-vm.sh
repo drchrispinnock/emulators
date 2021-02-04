@@ -21,6 +21,8 @@ SIZE=8G
 MEMORY=256M
 IMGSIZE=7800000
 SETUP=0
+IKERN=""
+KERN=""
 
 if [ "$1" = "-i" ]; then
 	SETUP=1
@@ -42,7 +44,7 @@ if [ -n "$2" ]; then
 	ARCH=$2
 fi
 
-EMU=$ARCH
+EMU="-e $ARCH"
 
 IMAGE="$LOWEROS-disk-$ARCH.img"
 # Fix depending on OS and arch
@@ -51,7 +53,10 @@ case $OS in
 		VERS=9.1
 		case $ARCH in
 			pmax)
-				EMU=3max
+				;;
+			cats)
+				IKERN=netbsd-INSTALL.aout.gz
+				KERN=netbsd-GENERIC.aout.gz
 				;;
 			*)
 				echo "$OS/$ARCH not supported">&2
@@ -61,7 +66,10 @@ case $OS in
 		
   	;;
 	OpenBSD)
+		VERS=6.8
 		case $ARCH in
+#			sgi)
+#				;;
 			*)
 				echo "$OS/$ARCH not supported">&2
 				exit 1
@@ -99,8 +107,9 @@ case $OS in
 		if [ "$ARCH" = "mips64el" ]; then
 			REMOTEISO=$OS-$VERS-evbmips-mips64el.iso
 		fi
-		
+	
 		URL="$NETBSDCDN/NetBSD-$VERS/images/$REMOTEISO"
+		FURL="$NETBSDCDN/NetBSD-$VERS/$ARCH/binary/kernel"
 		;;
 	OpenBSD)
 		DOTLESS=`echo $VERS | sed -e 's/\.//g'`
@@ -144,11 +153,29 @@ if [ "$?" != "0" ]; then
 fi
 
 case $ARCH in
-	
-  pmax)
+
+	cats)
+		EMU="-E cats"
+		;;
+  	pmax)
+	  	EMU="-e 3max"
 	;;
 esac
 
+
+if [ "$IKERN" != "" ]; then
+	if [ ! -f "$IKERN" ]; then
+		echo "No install kernel - setting up"
+		SETUP=1
+	fi
+fi
+
+if [ "$KERN" != "" ]; then
+	if [ ! -f "$KERN" ]; then
+		echo "No runtime kernel - setting up"
+		SETUP=1
+	fi
+fi
 
 if [ ! -f "$IMAGE" ]; then
 		echo "No image - setting up"
@@ -168,6 +195,24 @@ if [ "$SETUP" = 1 ]; then
 	
 	fi
 
+	if [ -f "$KERN" ]; then
+	  echo "Using existing $KERN file">&2
+	else
+	  echo "Downloading $KERN">&2
+	
+	echo "curl --location --output \"$KERN\" \"$FURL/$KERN\""
+	curl --location --output $KERN "$FURL/$KERN"
+	fi
+	
+	if [ -f "$IKERN" ]; then
+	  echo "Using existing $IKERN file">&2
+	else
+	  echo "Downloading $IKERN">&2
+	
+	echo "curl --location --output \"$IKERN\" \"$FURL/$IKERN\""
+	curl --location --output $IKERN "$FURL/$IKERN"
+	fi
+
 	if [ -f "$IMAGE" ]; then
 		echo "Using existing $IMAGE">&2
 	else
@@ -175,14 +220,14 @@ if [ "$SETUP" = 1 ]; then
 		dd if=/dev/zero of=$IMAGE bs=1024 count=1 seek=$IMGSIZE
 	fi
 	echo "Starting emulator to boot from install media"
-	echo "gxemul -X -e $EMU -d $IMAGE -d b:$ISO"
+	echo "gxemul -X $EMU -d $IMAGE -d b:$ISO"
 	sleep 2
-	gxemul -X -e $EMU -d $IMAGE -d b:$ISO
+	gxemul -X $EMU -d $IMAGE -d b:$ISO $IKERN
 
 else
 	echo "Starting emulator to boot:"
-	echo "gxemul -X -e $EMU -d $IMAGE"
+	echo "gxemul -X $EMU -d $IMAGE"
 	sleep 2
-	gxemul -X -e $EMU -d $IMAGE
+	gxemul -X $EMU -d $IMAGE $KERN
 fi
 
