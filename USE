@@ -1,0 +1,11 @@
+		NetBSD		OpenBSD		FreeBSD
+-------------------------------------------------------------
+i386		qemu		qemu		qemu
+amd64		qemu		qemu		qemu
+sparc64		qemu		qemu		qemu
+sparc		qemu
+
+macppc		qemu
+
+pmax		gxemul
+vax		simh
