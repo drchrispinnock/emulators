@@ -1,10 +1,18 @@
 
-These were developed on Mac OS/Big Sur with QEMU installed. And you should
+These were developed on Mac OS/Big Sur installed. And you should
 use at your own risk. No warranty. Anything that breaks, you get to
 mop up and keep all the pieces.
 
 See also: https://chrispinnock.com/stuff/running-systems-in-qemu/
 
+Simh & NetBSD/vax
+-----------------
+Install simh (e.g. brew install simh) and use ./setup-simh-vm.sh to
+setup the VM and ./run-simh-vm.sh to run it. You will have to type
+a boot command manually. Life is tough.
+
+Qemu:
+-----
 You can install QEMU with Homebrew. e.g. "brew install qemu".
 Or you can install it from the sources. It builds fine on Mac OS/Big Sur
 provided you installed Ninja first.
