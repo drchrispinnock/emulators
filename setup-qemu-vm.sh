@@ -97,9 +97,17 @@ case $OS in
 				;;
 			macppc)
 				EMU="ppc"
-				OFWBOOT="-prom-env boot-device=cd:,ofwboot -prom-env boot-file=/$VERS/macppc/bsd.rd"
-				echo "Warning: macppc needs attention at boot time after install">&2
-				echo "FATAL: 6.7/6.8 don't properly - they boot and panic)">&2
+				echo "machine mac99 gives as far as adb0 and hangs">&2
+				echo "machine mac99, via=pmu gets further but panics at ohci0">&2
+				echo "machine mac99, via=pmu-adb gets further but hangs at ohci0">&2
+				echo "6.8 halts on pmu-adb. I'm sure OpenBSD could be fixed to boot">&2
+				echo "machine default boots but panics">&2
+				echo "Tried 6.4-6.8 - EXITING">&2
+			  exit 1
+				;;
+				powerpc64)
+				EMU=ppc64
+				echo "Work in progress">&2
 				exit 1
 				;;
 			*)
@@ -148,6 +156,42 @@ if [ -n "$3" ]; then
 	VERS=$3
 fi
 
+# Tidy ups for version dependencies per OS & architecture
+#
+case $OS in
+	
+	OpenBSD)
+		case $ARCH in
+		
+			macppc)
+		
+				# Machine = mac99 gets further than generic
+				# but hangs at adb0. Also mem not config'ed
+				# via=pmu - gets further but panics when the USB bus is probed
+				# via=pmu-adb get further but hangs when the USB bus is proced
+				OFWBOOT="-L pc-bios -machine mac99,via=pmu-adb -prom-env boot-device=cd:,ofwboot -prom-env boot-file=/$VERS/macppc/bsd.rd"
+				;;
+				
+				powerpc64)
+				# Work in progress
+				#OFWBOOT="-machine powernv9 -prom-env boot-device=cd:,ofwboot -prom-env boot-file=/$VERS/macppc/bsd.rd"
+				#OFWBOOT="-prom-env boot-device=cd:,ofwboot -prom-env boot-file=/$VERS/macppc/bsd.rd"
+				OFWBOOT=""
+				;;
+			*)
+				echo "$OS/$ARCH not supported">&2
+				exit 1
+				;;
+		esac
+		;;
+		
+  *)
+		
+		;;
+esac
+
+# Operating system specifics across the architectures
+#
 case $OS in
 	NetBSD)
 		ISO=$OS-$VERS-$ARCH.iso
@@ -214,13 +258,19 @@ case $ARCH in
 # ;;
 
   macppc)
+	
 	# I need the ISO to boot from after installation
 	echo "$ISO" > usemeasroot.txt
 	QEMUFLAGS="$OFWBOOT -boot order=d -cdrom $ISO $IMAGE" 
-	
 	# My terminal hangs in curses on nographic, I've left it off
   ;;
-
+	
+  powerpc64)
+	# I need the ISO to boot from after installation
+	echo "$ISO" > usemeasroot.txt
+	QEMUFLAGS="$OFWBOOT -boot order=d -drive file=$IMAGE,if=scsi,bus=0,unit=0,format=raw,media=disk -drive file=$ISO,format=raw,if=scsi,bus=0,unit=2,media=cdrom" 
+	;;
+	
 	sparc64)
 	QEMUFLAGS="-drive file=$IMAGE,if=ide,bus=0,unit=0 -drive file=$ISO,format=raw,if=ide,bus=1,unit=0,media=cdrom,readonly=on -boot d -net user -net nic -nographic" 
 	# Use nographic for the installer
