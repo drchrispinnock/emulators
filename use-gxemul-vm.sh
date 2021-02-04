@@ -23,6 +23,7 @@ IMGSIZE=7800000
 SETUP=0
 IKERN=""
 KERN=""
+X="-X"
 
 if [ "$1" = "-i" ]; then
 	SETUP=1
@@ -55,8 +56,12 @@ case $OS in
 			pmax)
 				;;
 			cats)
+				# Boots but does not install
 				IKERN=netbsd-INSTALL.aout.gz
 				KERN=netbsd-GENERIC.aout.gz
+				;;
+			macppc)
+				KERN=netbsd-GENERIC.MP.gz
 				;;
 			*)
 				echo "$OS/$ARCH not supported">&2
@@ -160,6 +165,10 @@ case $ARCH in
   	pmax)
 	  	EMU="-e 3max"
 	;;
+	macppc)
+		EMU="-e g4"
+		#X="-x"
+	;;
 esac
 
 
@@ -195,22 +204,30 @@ if [ "$SETUP" = 1 ]; then
 	
 	fi
 
-	if [ -f "$KERN" ]; then
-	  echo "Using existing $KERN file">&2
-	else
-	  echo "Downloading $KERN">&2
+	if [ "$KERN" != "" ]; then
+		if [ -f "$KERN" ]; then
+		  echo "Using existing $KERN file">&2
+		else
+		  echo "Downloading $KERN">&2
 	
-	echo "curl --location --output \"$KERN\" \"$FURL/$KERN\""
-	curl --location --output $KERN "$FURL/$KERN"
+		echo "curl --location --output \"$KERN\" \"$FURL/$KERN\""
+		curl --location --output $KERN "$FURL/$KERN"
+		fi
+	fi	
+	
+	if [ "$IKERN" != "" ]; then
+
+		if [ -f "$IKERN" ]; then
+		  echo "Using existing $IKERN file">&2
+		else
+		  echo "Downloading $IKERN">&2
+	
+		echo "curl --location --output \"$IKERN\" \"$FURL/$IKERN\""
+		curl --location --output $IKERN "$FURL/$IKERN"
+		fi
 	fi
-	
-	if [ -f "$IKERN" ]; then
-	  echo "Using existing $IKERN file">&2
-	else
-	  echo "Downloading $IKERN">&2
-	
-	echo "curl --location --output \"$IKERN\" \"$FURL/$IKERN\""
-	curl --location --output $IKERN "$FURL/$IKERN"
+	if [ "$KERN" != "" ] && [ "$IKERN" = "" ]; then
+		IKERN=$KERN
 	fi
 
 	if [ -f "$IMAGE" ]; then
@@ -220,14 +237,14 @@ if [ "$SETUP" = 1 ]; then
 		dd if=/dev/zero of=$IMAGE bs=1024 count=1 seek=$IMGSIZE
 	fi
 	echo "Starting emulator to boot from install media"
-	echo "gxemul -X $EMU -d $IMAGE -d b:$ISO"
+	echo "gxemul $X $EMU -d $IMAGE -d b:$ISO $IKERN"
 	sleep 2
-	gxemul -X $EMU -d $IMAGE -d b:$ISO $IKERN
+	gxemul $X $EMU -d $IMAGE -d b:$ISO $IKERN
 
 else
 	echo "Starting emulator to boot:"
-	echo "gxemul -X $EMU -d $IMAGE"
+	echo "gxemul $X $EMU -d $IMAGE $KERN"
 	sleep 2
-	gxemul -X $EMU -d $IMAGE $KERN
+	gxemul $X $EMU -d $IMAGE $KERN
 fi
 
