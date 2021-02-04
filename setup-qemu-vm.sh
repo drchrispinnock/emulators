@@ -57,6 +57,9 @@ case $OS in
 			i386|sparc64|sparc)
 				# Supported for NetBSD
 				;;
+#			arc)
+#			  EMU="mips64el"
+#				;;
 			amd64)
 				EMU="x86_64"
 				;;
@@ -256,6 +259,9 @@ if [ "$?" != "0" ]; then
 fi
 
 case $ARCH in
+#	arc)
+#	QEMUFLAGS="-machine magnum -m $MEMORY -hda $IMAGE -cdrom "$ISO" $CURSES -boot d -net user -net nic -nographic"
+#	;;
 	i386|amd64)
 	QEMUFLAGS="-m $MEMORY -hda $IMAGE -cdrom "$ISO" $CURSES -boot d -net user -net nic"
   ;;

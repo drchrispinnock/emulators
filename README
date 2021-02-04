@@ -13,10 +13,10 @@ Issues:
 
 1. Make sure you are running Qemu >=5.2 if you want to run Sparc/Sparc64. I cannot get these to boot on 5.1.
 
-2. I am not sure, but I think there is a bug in Qemu 5.2. I've built it from
-scratch and used the Homebrew binaries. Large FTP transfers get interrupted.
-This happens on all the architectures and both Net and OpenBSD. It could
-be a bug on Qemu on Mac.
+2. I am not sure, but I think there is a bug in Qemu or MacOS. 
+I've built it from scratch and used the Homebrew binaries. Large 
+FTP transfers get interrupted.  This happens on all the architectures 
+and both Net and OpenBSD. 
 
 -------------------------------------------------------------------------
 The setup script. 
@@ -117,3 +117,14 @@ The sparc64 bit was based on work in this article:
 
 This was helpful for MacPPC:
 * https://wiki.qemu.org/Documentation/Platforms/PowerPC
+
+
+------------------------------------------------------------------------
+What doesn't work:
+------------------------------------------------------------------------
+
+OpenBSD/macppc panics
+FreeBSD/powerpc panics on vgapci
+
+I cannot get NetBSD/arc to boot but apparently others have had success.
+
