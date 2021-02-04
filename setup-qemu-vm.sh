@@ -68,7 +68,6 @@ case $OS in
 				EMU="ppc"
 				VERS=9.0	# 9.1 is broken for some reason
 				OFWBOOT="-prom-env boot-device=cd:,\\ofwboot.xcf"
-				echo "Warning: macppc needs attention at boot time after install">&2
 				echo "Warning: 9.1 does not work (uses 9.0 by default)">&2
 				;;
 			mac68k)
@@ -124,6 +123,13 @@ case $OS in
 					;;
 				amd64)
 					EMU="x86_64"
+					;;
+			powerpc)
+					EMU="ppc"
+					#OFWBOOT="-machine mac99,via=pmu -prom-env boot-device=cd:,\ppc\loader -prom-env boot-file=cd:0 -prom-env vga-ndrv?=true -prom-env auto-boot?=false"
+					OFWBOOT="-machine mac99,via=pmu -prom-env boot-device=cd:,\ppc\loader -prom-env boot-file=cd:0 -prom-env vga-ndrv?=true"
+					echo "WIP - cannot get FreeBSD to boot and not panic at vgapci0">&2
+				  exit 1
 					;;
 				*)
 					echo "$OS/$ARCH not supported">&2
@@ -257,7 +263,7 @@ case $ARCH in
 #  QEMUFLAGS="$QEMUFLAGS -kernel netbsd-GENERIC.bz2"
 # ;;
 
-  macppc)
+  macppc|powerpc)
 	
 	# I need the ISO to boot from after installation
 	echo "$ISO" > usemeasroot.txt
