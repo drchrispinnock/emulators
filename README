@@ -5,11 +5,17 @@ mop up and keep all the pieces.
 
 See also: https://chrispinnock.com/stuff/running-systems-in-qemu/
 
+Gxemul
+------
+This builds nicely from sources on Mac OS X. 
+
+
 Simh & NetBSD/vax
 -----------------
-Install simh (e.g. brew install simh) and use ./setup-simh-vm.sh to
-setup the VM and ./run-simh-vm.sh to run it. You will have to type
+Install simh (e.g. brew install simh) and use ./use-simh-vm.sh -i to
+setup the VM and ./use-simh-vm.sh to run it. You will have to type
 a boot command manually. Life is tough.
+
 
 Qemu:
 -----
