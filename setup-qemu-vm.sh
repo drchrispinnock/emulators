@@ -8,6 +8,7 @@
 # NetBSD - amd64, i386, sparc, sparc64, macppc
 # OpenBSD - amd64, i386, sparc64
 # FreeBSD - i386, amd64, sparc64
+# Solaris - i386
 
 # Usage: $0 [[[[[OS] Arch] NOGUI] Size] Target Dir]
 # e.g.
@@ -18,6 +19,7 @@ NETBSDCDN="https://cdn.netbsd.org/pub/NetBSD"
 OPENBSDCDN="https://cloudflare.cdn.openbsd.org/pub/OpenBSD"
 FREEBSDCDN="https://download.freebsd.org/ftp/releases"
 DEBIANCDN="https://cdimage.debian.org/debian-cd/current/"
+SOLARISCDN="" # Needs a login, can't download automagically
 
 # Defaults
 DEBUG=1
@@ -25,6 +27,7 @@ OS=NetBSD
 ARCH=amd64
 SIZE=8G
 MEMORY=256M
+EXTRAFLAGS=""
 
 # Get the OS from the command-line
 #
@@ -51,15 +54,28 @@ CURSES=""
 IMAGE="$LOWEROS-disk-$ARCH.img"
 # Fix depending on OS and arch
 case $OS in
+  Solaris|Slowaris)
+	  OS=Solaris # Sorry everyone. I did enjoy using it for work years ago :-)
+		VERS=10   # If you want 11, there's a VMware image
+		MEMORY=1G 		# Memory hungry
+		case $ARCH in
+			i386)
+			;;
+			*)
+			echo "$OS/$ARCH not supported">&2
+			exit 1
+			;;
+		esac
+  ;;
 	NetBSD)
 		VERS=9.1
 		case $ARCH in
-			i386|sparc64|sparc)
+			i386)
 				# Supported for NetBSD
 				;;
-#  	arc)
-#		  EMU="mips64" or el?
-#				;;
+				sparc64|sparc)
+				EXTRAFLAGS="-nographic" 
+				;;
 			amd64)
 				EMU="x86_64"
 				;;
@@ -207,6 +223,14 @@ esac
 # Operating system specifics across the architectures
 #
 case $OS in
+	Solaris)
+	ARCH1=x86
+	if [ "$ARCH" = "sparc64" ]; then 
+		ARCH1=sparc
+	fi
+	ISO="sol-$VERS-u11-ga-$ARCH1-dvd.iso"
+	URL="" #Not used
+	;;
 	NetBSD)
 		ISO=$OS-$VERS-$ARCH.iso
 
@@ -234,7 +258,7 @@ case $OS in
 		URL="$DEBIANCDN/$ARCH/iso-cd/$ISO"
 		;;
    *)
-	 	echo "Should not be reached!" > 2&1
+	 	echo "Should not be reached!" >&2
 		exit 1
 esac
 
@@ -249,19 +273,34 @@ if [ -n "$5" ]; then
 fi
 
 if [ "$DEBUG" = "1" ]; then
-	echo "Setting up $OS/$ARCH $VERS using qemu $EMU"
-	echo "Install media location: $URL"
-	echo "Local name: $ISO"
-	echo "Using target: $TARGET/$ARCH"
+	echo "Setting up $OS/$ARCH $VERS using qemu $EMU">&2
+	echo "Install media location: $URL">&2
+	echo "Local name: $ISO">&2
+	echo "Using target: $TARGET/$ARCH">&2
+	echo "">&2
+	sleep 1
 fi
 # Make our directory
 #
 mkdir -p "$TARGET/$ARCH"
 cd "$TARGET/$ARCH"
 if [ "$?" != "0" ]; then
-	echo "Error creating and changing to the target directory">&2
+	echo "### Error creating and changing to the target directory">&2
 	exit 1
 fi
+
+# OS dependencies on ISO download - Solaris at the mo
+#
+case $OS in
+	Solaris)
+		if [ ! -f "$ISO" ]; then
+			echo "### Please download the ISOs from Oracle">&2
+			echo "### You will need a login">&2
+			echo "### Place them in $TARGET/$ARCH">&2
+			exit 1
+		fi
+		;;
+	esac
 
 case $ARCH in
 #  arc)
@@ -292,8 +331,8 @@ case $ARCH in
 	;;
 	
 	sparc64)
-	QEMUFLAGS="-drive file=$IMAGE,if=ide,bus=0,unit=0 -drive file=$ISO,format=raw,if=ide,bus=1,unit=0,media=cdrom,readonly=on -boot d -net user -net nic -nographic" 
-	# Use nographic for the installer
+	QEMUFLAGS="-drive file=$IMAGE,if=ide,bus=0,unit=0 -drive file=$ISO,format=raw,if=ide,bus=1,unit=0,media=cdrom,readonly=on -boot d -net user -net nic"
+	
 	;;
 	sparc)
 	QEMUFLAGS="-drive file=$IMAGE,if=scsi,bus=0,unit=0,media=disk -drive file=$ISO,format=raw,if=scsi,bus=0,unit=2,media=cdrom,readonly=on -boot d -net user -net nic -nographic"
@@ -323,9 +362,9 @@ else
 fi
 
 echo "Starting emulator to boot from install media"
-echo "qemu-system-$EMU $QEMUFLAGS"
+echo "qemu-system-$EMU $EXTRAFLAGS $QEMUFLAGS"
 sleep 2
-qemu-system-$EMU $QEMUFLAGS
+qemu-system-$EMU $EXTRAFLAGS $QEMUFLAGS
 
 # FreeBSD also has VM images
 #VM=FreeBSD-$VERS-$ARCH.qcow2
