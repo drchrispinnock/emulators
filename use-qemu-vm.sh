@@ -133,7 +133,8 @@ case $OS in
 			;;
 			amd64)
 			MEMORY=4G # Watch it struggle and dump on 1G...
-			VERS=11
+			EXTRAFLAGS="-M q35"
+			VERS=11 # Still has trouble on discs
 			;;
 			*)
 			echo "$OS/$ARCH not supported">&2
