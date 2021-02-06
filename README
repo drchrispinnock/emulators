@@ -6,10 +6,10 @@ These scripts were developed on Mac OS/Big Sur installed. And you should
 use at your own risk. No warranty. Anything that breaks, you get to
 mop up and keep all the pieces.
 
-        NetBSD  OpenBSD FreeBSD Solaris Debian
+        NetBSD  OpenBSD FreeBSD Solaris Debian Plan9
 -------------------------------------------------------------
 i386    qemu    qemu    qemu    qemu
-amd64   qemu    qemu    qemu    +++     qemu
+amd64   qemu    qemu    qemu    +++     qemu   qmu^
 sparc64	qemu    qemu++  qemu**
 sparc   qemu
 macppc  qemu***
@@ -27,6 +27,7 @@ vax	simh
 ++ regular boot asks for the root device
 +++ Solaris 10 for i386. I cannot get the 11 installation iso to boot 
 on amd64, but the VM images may work.
+^ others may work - I haven't tried
 
 ------------------------------------------------------------------------
 1. Qemu
@@ -100,6 +101,9 @@ Quirks:
       DHCP will not work (I think due to the lack of BPF on the interface) - you can setup a static IP. e.g. 10.0.2.100/255.255.255.0 gateway 10.0.2.2 and DNS 10.0.2.3.
 
 * FreeBSD/sparc64 - only boots -nographic so I've made this the default
+* Plan9/amd64 - if you follow the suggested installation, everything
+  works. On boot you need to confirm the root device and answer "glenda"
+  to the second question. This ought to be smoother.
 
 Does not work:
 --------------

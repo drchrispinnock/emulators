@@ -132,6 +132,7 @@ case $OS in
 			VERS=10
 			;;
 			amd64)
+			MEMORY=4G # Watch it struggle and dump on 1G...
 			VERS=11
 			;;
 			*)
