@@ -16,7 +16,7 @@
 # e.g.
 # $0 [-i] OpenBSD i386 - run the installer
 # $0 OpenBSD i386 - run the VM or the installer if it isn't setup
-USAGE="$0 [-i] [-c] [-n] [-d] [-t TargetDir] [OS [arch [ver]]]\n  -i run installer ISO\n  -c use -display curses\n  -n use -nographic (overrides -c)\n  -d more output\n  use -t to specify an alternative target directory for files\n\n  OS can be NetBSD, OpenBSD, FreeBSD, Plan9, Debian or Solaris\n"
+USAGE="$0 [-i] [-c] [-n] [-d] [-t TargetDir] [-m memory] [-s hd size] [OS [arch [ver]]]\n  -i run installer ISO\n  -c use -display curses\n  -n use -nographic (overrides -c)\n  -d more output\n  use -t to specify an alternative target directory for files\n\n  OS can be NetBSD, OpenBSD, FreeBSD, Plan9, Debian or Solaris\n"
 
 # Set the environment variable QEMUTARGET if you want an
 # alternative to $HOME/Qemu
@@ -40,6 +40,9 @@ SETUP="0"
 
 NEEDISO="" # Need ISO for regular operation
 
+CLISIZE=""
+CLIMEM=""
+
 # brew version seems to support curses. Perhaps need to recompile
 # -nographic doesn't work with NetBSD 
 #CURSES="-display curses"
@@ -59,6 +62,8 @@ while [ $# -gt 0 ]; do
 	-n|--nographic)				
 			CURSES="-nographic"; ;;
 	-t)			  QEMUTARGET="$2"; shift; ;;
+	-m)			  CLIMEM="$2"; shift; ;;
+	-s)       CLISIZE="$2"; shift; ;;
 	-h|--help)		
 				echo "$USAGE"; exit ;;
 	-*)		echo "${0##*/}: unknown option \"$1\"" 1>&2
@@ -259,11 +264,8 @@ case $OS in
 		exit 1
 esac
 
-# Fix version from the command line
-#
-if [ -n "$4" ]; then
-	SIZE=$4
-fi
+[ "$CLISIZE" != "" ] && SIZE=$CLISIZE
+[ "$CLIMEM" != "" ] && MEMORY=$CLIMEM
 
 FINALTARGET="$TARGET/$ARCH/$VERS"
 if [ "$DEBUG" = "1" ]; then
@@ -300,7 +302,7 @@ case $OS in
 	if [ -f "$IMAGE" ]; then
 		echo "Using existing hard disc $IMAGE">&2
 	else
-		echo "Creating $IMAGE">&2
+		echo "Creating $IMAGE of size $SIZE">&2
 		qemu-img create -f raw "$IMAGE" $SIZE
 		echo "(Using Setup mode)">&2
 		SETUP="1"
