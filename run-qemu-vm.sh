@@ -2,6 +2,9 @@
 
 # Run emulator 
 
+echo "### Deprecated - please use use-qemu-vm.sh"
+sleep 2
+
 OS=NetBSD
 ARCH=amd64
 CURSES="" # -nographic doesn't like NetBSD; brew version allows display curses

@@ -14,6 +14,9 @@
 # e.g.
 # $0 OpenBSD i386
 
+echo "### Deprecated - please use use-qemu-vm.sh -i"
+sleep 2
+
 # CDNs
 NETBSDCDN="https://cdn.netbsd.org/pub/NetBSD"
 OPENBSDCDN="https://cloudflare.cdn.openbsd.org/pub/OpenBSD"
