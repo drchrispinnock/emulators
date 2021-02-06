@@ -33,7 +33,7 @@ SIZE=8G
 MEMORY=256M
 VERS=9.1
 IF="net"
-TARGET=$HOME/SIMH/$OS
+TARGET=$HOME/VM/SIMH/$OS
 IMAGE="netbsd-disk-$ARCH.img"
 
 if [ "$1" = "-i" ]; then

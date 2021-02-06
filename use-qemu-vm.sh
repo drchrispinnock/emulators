@@ -19,7 +19,7 @@
 USAGE="$0 [-i] [-c] [-n] [-d] [-t TargetDir] [-m memory] [-s hd size] [OS [arch [ver]]]\n  -i run installer ISO\n  -c use -display curses\n  -n use -nographic (overrides -c)\n  -d more output\n  use -t to specify an alternative target directory for files\n\n  OS can be NetBSD, OpenBSD, FreeBSD, Plan9, Debian or Solaris\n"
 
 # Set the environment variable QEMUTARGET if you want an
-# alternative to $HOME/Qemu
+# alternative to $HOME/VM/Qemu
 
 # CDNs
 NETBSDCDN="https://cdn.netbsd.org/pub/NetBSD"
@@ -83,7 +83,7 @@ LOWEROS=`echo $OS | awk '{print tolower($0)}'`
 # Environment var
 #
 if [ "$QEMUTARGET" = "" ]; then
-	QEMUTARGET=$HOME/Qemu
+	QEMUTARGET=$HOME/VM/Qemu
 fi
 TARGET=$QEMUTARGET/$OS
 

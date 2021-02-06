@@ -37,7 +37,7 @@ if [ -n "$1" ]; then
 fi
 
 LOWEROS=`echo $OS | awk '{print tolower($0)}'`
-TARGET=$HOME/GXemul/$OS
+TARGET=$HOME/VM/GXemul/$OS
 
 # Determine the architecture
 #
