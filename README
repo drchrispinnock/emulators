@@ -1,118 +1,112 @@
+------------------------------------------------------------------------
+Emulator setup scripts
+------------------------------------------------------------------------
 
-These were developed on Mac OS/Big Sur installed. And you should
+These scripts were developed on Mac OS/Big Sur installed. And you should
 use at your own risk. No warranty. Anything that breaks, you get to
 mop up and keep all the pieces.
 
-See also: https://chrispinnock.com/stuff/running-systems-in-qemu/
+        NetBSD  OpenBSD FreeBSD Solaris Debian
+-------------------------------------------------------------
+i386    qemu    qemu    qemu    qemu
+amd64   qemu    qemu    qemu            qemu
+sparc64	qemu    qemu    qemu**
+sparc   qemu
+macppc  qemu***
+arm64   qemu* 
 
-Gxemul
-------
-This builds nicely from sources on Mac OS X. You will need X11 (e.g.
-XQuartz).
-* NetBSD/pmax 
+pmax    gxemul
+cats	gxemul+
 
-* NetBSD/cats - boots but panics during base.tgz extract
+vax	simh
 
+* see section 2
+** had it booting previously, isn't working at the moment
+*** NetBSD 9.1 doesn't boot, we use 9.0
++ gxemul says it works, but I can't get 9.1 to install (it boots)
 
-Simh & NetBSD/vax
------------------
-Install simh (e.g. brew install simh) and use ./use-simh-vm.sh -i to
-setup the VM and ./use-simh-vm.sh to run it. You will have to type
-a boot command manually. Life is tough.
+------------------------------------------------------------------------
+1. Qemu
+------------------------------------------------------------------------
 
+use-qemu-vm.sh [-i] [-c] [OS [arch [vers]]]    
+   * Sets up or boots a Qemu VM with OS and arch
+   * if you specify -i, you get the setup routine and the ISO will
+     be downloaded if needed and where possible. The script will try
+     to boot the ISO.
+     if you specify -c, we'll try to use "-display curses"
+   * if you set the QEMUTARGET variable, the VMs will be put there 
+     instead of in $HOME/Qemu
+   * if the file system image doesn't exist, the script will default
+     to setup mode
+   * The default is NetBSD/amd64
+   * you need to install qemu and curl (needs ca-certificates on some
+     host platforms such as NetBSD)
+   * During the install it will make life easier if you setup the 
+     machine for DHCP if possible
+   * At the end of the install, exit to a shell and "shutdown -p now"
+     if possible or "halt". If Qemu doesn't exit, you can CTRL-C it
+     when the guest OS has ceased.
+   
+(The setup-qemu-vm & run-qemu-vm scripts are still here, but they are
+deprecated. It was silly having two scripts that did almost the same 
+thing. I will be removing them soon. See README.OLD for docs on these.)
 
-Qemu:
------
-You can install QEMU with Homebrew. e.g. "brew install qemu".
-Or you can install it from the sources. It builds fine on Mac OS/Big Sur
-provided you installed Ninja first.
-
-Issues:
-
-1. Make sure you are running Qemu >=5.2 if you want to run Sparc/Sparc64. I cannot get these to boot on 5.1.
-
-2. I am not sure, but I think there is a bug in Qemu or MacOS. 
-I've built it from scratch and used the Homebrew binaries. Large 
-FTP transfers get interrupted.  This happens on all the architectures 
-and both Net and OpenBSD. 
-
--------------------------------------------------------------------------
-The setup script. 
--------------------------------------------------------------------------
-
-./setup-qemu-vm.sh [OS [arch [ver [... other opts]]]]
-
-This script sets up a VM image file in $HOME/QEmu/$OS, downloads the 
-installer ISO and boots the VM into the installer. You can then
-customise the installer to get the VM you want.
-
-Once you've finished it is best to power down the VM. I usually do this
-by exiting the installer and using "shutdown -p now".
-
-With no options you get NetBSD/amd64.
-
-Supported: 
-* NetBSD/amd64, i386, sparc, sparc64
+The following work:
+* NetBSD/amd64, i386, sparc, sparc64, macppc
 * OpenBSD/amd64, i386, sparc64
 * FreeBSD/i386, amd64
 * Solaris 10/i386
+* Debian/amd64
 
-Boots with caveats (see below):
-* NetBSD/macppc 
-* FreeBSD/sparc64
-* Debian/amd64 - sort of works...
+Quirks:
+-------
+* Make sure you are running Qemu >=5.2 if you want to run Sparc/Sparc64. 
+  I cannot get these to boot on 5.1.
+* There appears to be a bug in either Qemu or MacOS. I've seen this in
+  a self-built Qemu (both 4.2.1 and 5.2) and 5.2 from homebrew. The 
+  guest OS gets short reads on FTP and is missing a byte. I've written
+  this up on my blog page.
+* For Solaris, you will need to get the ISO image for x86 from Oracle
+* NetBSD/macppc is slightly more involved:
+      When booting normally, I setup the boot to fail to drop to
+      the boot prompt. To boot type:
+
+      netbsd.macppc -a
+
+      The -a will instruct netbsd to ask you for the root filesystem 
+      - use wd0a. The run script needs the iso to be present on the filesystem for something valid for OpenFirmware to book. You could put a kernel and OpenFirmware boot program on an iso image and
+      use this instead. 
+
+      DHCP will not work (I think due to the lack of BPF on the interface) - you can setup a static IP. e.g. 10.0.2.100/255.255.255.0 gateway 10.0.2.2 and DNS 10.0.2.3.
 
 Does not work:
-* OpenBSD/macppc - can get it to the bootloader but it panics staightaway
-* Solaris 10/sparc64 - doesn't boot properly
+--------------
+* FreeBSD/sparc64 - I've previously had this booting. For some reason
+  I cannot get it to boot now. When it did boot before, there were
+  segmentation faults on sshd
+* OpenBSD/macppc - can get it to the bootloader but it panics.
+  With pmu options I can get the system to go further but it panics when
+  probing the usb bus.
+* FreeBSD/powerppc - hangs/panics during probe of vgapci0
+* Solaris 10/sparc64 - doesn't boot (I read somewhere that the processor
+  emulated in the VM is not sufficient for Solaris 10. Older versions
+  might work.)
+* NetBSD/arc doesn't boot -  but apparently others have had success.
 
-If the ISO file is already present, it will use it.
-If the hard disc image is already present, it will use it.
-In theory, it should be possible to use this script to upgrade the OS
-in the VM.
+See also: 
 
-------------------------------------------------------------------------
-The run script. 
-------------------------------------------------------------------------
+* https://chrispinnock.com/stuff/running-systems-in-qemu/
 
-Then:
+The sparc64 bit was based on work in this article:
+* https://virtuallyfun.com/wordpress/2015/01/14/netbsd-6-1-5-sparc64-on-qemu/
+* https://wiki.qemu.org/Documentation/Platforms/SPARC
 
-./run-qemu-vm.sh [OS [arch [curses [other opts]]]]
-
-will run the VM that you have setup previously.
-
-By default it will run an amd64 VM (provided it has been setup).
-
-------------------------------------------------------------------------
-For NetBSD:
-------------------------------------------------------------------------
-You will need to set dhcpcd=YES in rc.conf. Then networking will work
-on boot.
+This was helpful for NetBSD/MacPPC:
+* https://wiki.qemu.org/Documentation/Platforms/PowerPC
 
 ------------------------------------------------------------------------
-NetBSD/Macppc
-------------------------------------------------------------------------
-
-The setup script will get you booted into the installer. You may want
-to partition the filesystem to have an HFS partition which later you
-can setup to boot from. For this you will need hfstools.
-
-The run script will drop to a Boot prompt. You can boot by typing:
-netbsd.macppc -a
-
-The -a will instruct netbsd to ask you for the root filesystem - use wd0a
- 
-The run script needs the iso to be present on the filesystem.
-
-You could put a kernel and OpenFirmware boot program on an iso image and
-use this instead. 
-
-DHCP will not work (I think due to the lack of BPF on the interface) -
-you can setup a static IP. e.g. 10.0.2.100/255.255.255.0 gateway 10.0.2.2
-and DNS 10.0.2.3.
-
-------------------------------------------------------------------------
-NetBSD/arm64
+2. Qemu for NetBSD/arm64
 ------------------------------------------------------------------------
 
 * Use setup-arm64.sh to get the latest bits and pieces including 
@@ -122,31 +116,32 @@ to 10G
 graphics options easily if you prefer not to run headless
 
 ------------------------------------------------------------------------
-FreeBSD/sparc64 12.2
+3. Gxemul
 ------------------------------------------------------------------------
 
-* Installs and boots, but I'm seeing segmentation faults for sshd and
-sendmail programmes during boot.
+./use-gxemul-vm.sh [-i] [OS [arch]]
+will setup a VM running on gxemul on the first run (or with -i)
+and will run it if it is setup already.
 
+Gxemul builds nicely from sources on Mac OS X. You will need X11 (e.g.
+XQuartz).
 
+The following work:
+* NetBSD/pmax 
+
+(I've not tried many others at this point)
+
+The following don't work:
+* NetBSD/cats - boots but panics during base.tgz extract
 
 ------------------------------------------------------------------------
-References:
-------------------------------------------------------------------------
-The sparc64 bit was based on work in this article:
-* https://virtuallyfun.com/wordpress/2015/01/14/netbsd-6-1-5-sparc64-on-qemu/
-* https://wiki.qemu.org/Documentation/Platforms/SPARC
-
-This was helpful for MacPPC:
-* https://wiki.qemu.org/Documentation/Platforms/PowerPC
-
-
-------------------------------------------------------------------------
-What doesn't work:
+4. Simh & NetBSD/vax
 ------------------------------------------------------------------------
 
-OpenBSD/macppc panics
-FreeBSD/powerpc panics on vgapci
-
-I cannot get NetBSD/arc to boot but apparently others have had success.
+./use-simh-vm.sh [-i]
+* Will help setup a NetBSD/vax virtual machine with SIMH
+* SIMH needs to be installed first
+* The first time you will need to type boot dua1:     
+  not dual - it's a 1.
+* For normal operation, you will need to type boot dua0:
 

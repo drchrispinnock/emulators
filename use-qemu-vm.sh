@@ -11,10 +11,14 @@
 # Debian - amd64
 # Solaris - i386
 
-# Usage: $0 [[[[[OS] Arch] NOGUI] Size] Target Dir]
+# Usage: $0 [[[[[OS] Arch] NOGUI] Size]
 # e.g.
 # $0 [-i] OpenBSD i386 - run the installer
 # $0 OpenBSD i386 - run the VM or the installer if it isn't setup
+USAGE="$0 [-i][-c] [OS [arch [ver]]]\n  -i run installer ISO\n  -c use -display curses\n"
+
+# Set the environment variable QEMUTARGET if you want an
+# alternative to $HOME/Qemu
 
 # CDNs
 NETBSDCDN="https://cdn.netbsd.org/pub/NetBSD"
@@ -24,7 +28,7 @@ DEBIANCDN="https://cdimage.debian.org/debian-cd/current/"
 SOLARISCDN="" # Needs a login, can't download automagically
 
 # Defaults
-DEBUG=1
+DEBUG=0
 OS=NetBSD
 ARCH=amd64
 SIZE=8G
@@ -42,12 +46,21 @@ fi
 
 # Get the OS from the command-line
 #
+
+
 if [ -n "$1" ]; then
 	OS=$1
 fi
 
 LOWEROS=`echo $OS | awk '{print tolower($0)}'`
-TARGET=$HOME/Qemu/$OS
+
+# Environment var
+#
+if [ "$QEMUTARGET" = "" ]; then
+	QEMUTARGET=$HOME/Qemu
+fi
+TARGET=$QEMUTARGET/$OS
+
 
 # Determine the architecture
 #
@@ -85,23 +98,25 @@ case $OS in
 				# Supported for NetBSD
 				;;
 				sparc64|sparc)
-				EXTRAFLAGS="-nographic" 
+#				EXTRAFLAGS="-nographic" # XXX not sure this is needed
 				;;
 			amd64)
 				EMU="x86_64"
 				;;
-			arm64)
-			if [ "$SETUP" = "1" ]; then
-				echo "Use setup-arm64.sh">&2 # XXX we should really setup here
-				exit 1
-			fi
-				;;
+#			arm64)
+#			if [ "$SETUP" = "1" ]; then
+#				echo "Use setup-arm64.sh">&2 # XXX we should really setup here
+#				exit 1
+#			fi
+#				;;
 			macppc)
 				EMU="ppc"
-				VERS=9.0	# 9.1 is broken for some reason
-				OFWBOOT="-prom-env boot-device=cd:,\\ofwboot.xcf"
+				VERS=9.0	# 9.1 doesn't boot
+				
 				echo "### Warning: 9.1 does not work (uses 9.0 by default)">&2
 				NEEDISO=1
+				OFWBOOT="-prom-env boot-device=cd:,\\ofwboot.xcf -prom-env boot-file=notfound" # Regular boot - for setup see later
+			
 				;;
 			*)
 				echo "$OS/$ARCH not supported">&2
@@ -142,10 +157,12 @@ case $OS in
 			;;
 		Debian)
 		VERS=10.7.0
+		
 			case $ARCH in
 				amd64)
 					# Debian
 					EMU="x86_64"
+					MEMORY=1G 		# Installer grumbles about memory
 					;;
 				*)
 					echo "$OS/$ARCH not supported">&2
@@ -237,6 +254,19 @@ case $OS in
 		;;
 	esac
 
+	if [ -f "$IMAGE" ]; then
+		echo "Using existing hard disc $IMAGE">&2
+	else
+		echo "Creating $IMAGE">&2
+		qemu-img create -f raw "$IMAGE" $SIZE
+		[ "$SETUP" != "1" ] && echo "Changing to Setup mode">&2
+		SETUP=1
+	fi
+	BOOT="c"
+	if [ "$SETUP" = "1" ] ; then
+		BOOT="d"
+	fi
+
 if [ -f "$ISO" ]; then
   echo "Installation $ISO file present">&2
 else
@@ -250,18 +280,7 @@ else
 	fi
 fi
 
-if [ -f "$IMAGE" ]; then
-	echo "Using existing hard disc $IMAGE">&2
-else
-	echo "Creating $IMAGE">&2
-	qemu-img create -f raw "$IMAGE" $SIZE
-	[ "$SETUP" != "1" ] && echo "Changing to Setup mode">&2
-	SETUP=1
-fi
-BOOT="c"
-if [ "$SETUP" = "1" ] ; then
-	BOOT="d"
-fi
+
 INSTALLFLAGS=""
 
 
@@ -273,6 +292,8 @@ case $ARCH in
   macppc|powerpc)
 	# I need the ISO to boot from after installation
 	#
+	[ "$SETUP" = "" ] && echo "### At Boot:  type  netbsd.macppc -a">&2
+	[ "$SETUP" = "$1" ] && OFWBOOT="-prom-env boot-device=cd:,\\ofwboot.xcf"
 	QEMUFLAGS="$OFWBOOT $IMAGE" 
 	INSTALLFLAGS="-cdrom $ISO" # CD is needed for regular running...
   ;;
