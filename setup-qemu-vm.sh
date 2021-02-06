@@ -148,13 +148,6 @@ case $OS in
 				amd64)
 					EMU="x86_64"
 					;;
-			powerpc)
-					EMU="ppc"
-					#OFWBOOT="-machine mac99,via=pmu -prom-env boot-device=cd:,\ppc\loader -prom-env boot-file=cd:0 -prom-env vga-ndrv?=true -prom-env auto-boot?=false"
-					OFWBOOT="-machine mac99,via=pmu -prom-env boot-device=cd:,\ppc\loader -prom-env boot-file=cd:0 -prom-env vga-ndrv?=true"
-					echo "WIP - cannot get FreeBSD to boot and not panic at vgapci0">&2
-				  exit 1
-					;;
 				*)
 					echo "$OS/$ARCH not supported">&2
 					exit 1
