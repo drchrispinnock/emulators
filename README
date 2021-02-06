@@ -9,7 +9,7 @@ mop up and keep all the pieces.
         NetBSD  OpenBSD FreeBSD Solaris Debian
 -------------------------------------------------------------
 i386    qemu    qemu    qemu    qemu
-amd64   qemu    qemu    qemu    qemu+++ qemu
+amd64   qemu    qemu    qemu    +++     qemu
 sparc64	qemu    qemu++  qemu**
 sparc   qemu
 macppc  qemu***
@@ -25,7 +25,8 @@ vax	simh
 *** NetBSD 9.1 doesn't boot, we use 9.0
 + gxemul says it works, but I can't get 9.1 to install (it boots)
 ++ regular boot asks for the root device
-+++ Solaris 10 for i386, 11 for amd64
++++ Solaris 10 for i386. I cannot get the 11 installation iso to boot 
+on amd64, but the VM images may work.
 
 ------------------------------------------------------------------------
 1. Qemu
@@ -74,9 +75,8 @@ The following work:
 * OpenBSD/amd64, i386, sparc64 (all 6.8)
 * FreeBSD/i386, amd64, sparc64 (all 12.2)
 * Solaris 10/i386
-* Solaris 11/amd64???
 * Debian/amd64 (latest)
-* Plan 9???
+* Plan 9/amd64 (latest)
 
 Quirks:
 -------

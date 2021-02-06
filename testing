@@ -4,13 +4,6 @@ Once to install and once to run.
 
 Last updated 6/2/2021
 
-Problems:
----------
-sh use-qemu-vm.sh OpenBSD sparc64 	# 20210206 - asks for root on boot
-sh use-qemu-vm.sh FreeBSD sparc64 	# 20210206 - bust
-
-Expected behaviour:
--------------------
 sh use-qemu-vm.sh NetBSD sparc64 	# 20210206
 sh use-qemu-vm.sh NetBSD i386 		# 20210206
 sh use-qemu-vm.sh NetBSD amd64 		# 20210206
@@ -26,4 +19,8 @@ sh use-qemu-vm.sh NetBSD macppc		# 20210205
 
 sh use-qemu-vm.sh Solaris i386		# 20210206
 sh use-qemu-vm.sh Debian amd64 		# 20210206
+sh use-qemu-vm.sh FreeBSD sparc64 	# 20210206 (boots on nographic only)
+sh use-qemu-vm.sh OpenBSD sparc64 	# 20210206 (asks for root on boot)
+
+sh use-qemu-vm.sh Plan9 amd64       
 

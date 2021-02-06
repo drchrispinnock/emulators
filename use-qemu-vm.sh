@@ -9,8 +9,8 @@
 # OpenBSD - amd64, i386, sparc64
 # FreeBSD - i386, amd64, sparc64
 # Debian - amd64
-# Solaris - i386
-# Plan9 - i386
+# Solaris 10 - i386
+# Plan9 - amd64
 
 # Usage: $0 [[[[[OS] Arch] NOGUI] Size]
 # e.g.
