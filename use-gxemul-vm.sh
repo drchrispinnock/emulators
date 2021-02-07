@@ -10,6 +10,8 @@
 
 # CDNs
 NETBSDCDN="https://cdn.netbsd.org/pub/NetBSD"
+NETBSDARCHIVE="http://archive.netbsd.org/pub/NetBSD-archive"
+
 OPENBSDCDN="https://cloudflare.cdn.openbsd.org/pub/OpenBSD"
 FREEBSDCDN="https://download.freebsd.org/ftp/releases"
 
@@ -56,9 +58,12 @@ case $OS in
 			pmax)
 				;;
 			cats)
-				# Boots but does not install
+				# After 5, panics during base.tgz extract
+				#
+				VERS=4.0.1
 				IKERN=netbsd-INSTALL.aout.gz
 				KERN=netbsd-GENERIC.aout.gz
+				MEMORY=256M # Cats board had 256M
 				;;
 			macppc)
 				KERN=netbsd-GENERIC.MP.gz
@@ -113,8 +118,28 @@ case $OS in
 			REMOTEISO=$OS-$VERS-evbmips-mips64el.iso
 		fi
 	
-		URL="$NETBSDCDN/NetBSD-$VERS/images/$REMOTEISO"
-		FURL="$NETBSDCDN/NetBSD-$VERS/$ARCH/binary/kernel"
+		A=`echo $VERS | awk -F. '{print $1}'`
+  
+	  if [ "$A" -lt 7 ]; then 
+		  # Use the archives
+			NETBSDCDN="$NETBSDARCHIVE"
+		fi
+	
+	_DIR=images
+	
+		case $ARCH in 
+			cats)
+			if [ "$A" -lt 6 ]; then 
+			IKERN=netbsd.aout-INSTALL.gz
+			KERN=netbsd.aout-GENERIC.gz
+			REMOTEISO=catscd-$VERS.iso
+			_DIR=iso
+			fi
+			;;
+		esac
+			URL="$NETBSDCDN/NetBSD-$VERS/$_DIR/$REMOTEISO"
+			FURL="$NETBSDCDN/NetBSD-$VERS/$ARCH/binary/kernel"
+		
 		;;
 	OpenBSD)
 		DOTLESS=`echo $VERS | sed -e 's/\.//g'`
@@ -138,20 +163,18 @@ if [ -n "$4" ]; then
 	SIZE=$4
 fi
 
-if [ -n "$5" ]; then
-	TARGET="$5/$OS"
-fi
 
 if [ "$DEBUG" = "1" ]; then
 	echo "Setting up $OS/$ARCH $VERS"
 	echo "Install media location: $URL"
 	echo "Local name: $ISO"
-	echo "Using target: $TARGET/$ARCH"
+	echo "Using target: $TARGET/$ARCH/$VERS"
+	sleep 5
 fi
 # Make our directory
 #
-mkdir -p "$TARGET/$ARCH"
-cd "$TARGET/$ARCH"
+mkdir -p "$TARGET/$ARCH/$VERS"
+cd "$TARGET/$ARCH/$VERS"
 if [ "$?" != "0" ]; then
 	echo "Error creating and changing to the target directory">&2
 	exit 1
@@ -237,14 +260,14 @@ if [ "$SETUP" = 1 ]; then
 		dd if=/dev/zero of=$IMAGE bs=1024 count=1 seek=$IMGSIZE
 	fi
 	echo "Starting emulator to boot from install media"
-	echo "gxemul $X $EMU -d $IMAGE -d b:$ISO $IKERN"
+	echo "gxemul $X $EMU -M $MEMORY -d $IMAGE -d b:$ISO $IKERN"
 	sleep 2
-	gxemul $X $EMU -d $IMAGE -d b:$ISO $IKERN
+	gxemul $X $EMU -M $MEMORY -d $IMAGE -d b:$ISO $IKERN
 
 else
 	echo "Starting emulator to boot:"
-	echo "gxemul $X $EMU -d $IMAGE $KERN"
+	echo "gxemul $X $EMU -M $MEMORY -d $IMAGE $KERN"
 	sleep 2
-	gxemul $X $EMU -d $IMAGE $KERN
+	gxemul $X $EMU -M $MEMORY -d $IMAGE $KERN
 fi
 
