@@ -78,6 +78,7 @@ The following work:
 * Solaris 10/i386
 * Debian/amd64 (latest)
 * Plan 9/amd64 (latest)
+* Solaris 8/sparc (with no graphic)
 
 Quirks:
 -------
@@ -105,6 +106,7 @@ Quirks:
   works. On boot you need to confirm the root device and answer "glenda"
   to the second question. This ought to be smoother.
 
+
 Does not work:
 --------------
 
@@ -112,10 +114,14 @@ Does not work:
   With pmu options I can get the system to go further but it panics when
   probing the usb bus.
 * FreeBSD/powerppc - hangs/panics during probe of vgapci0
+* Solaris 8/sparc 64 - doesn't boot - immediate panic
 * Solaris 10/sparc64 - doesn't boot (I read somewhere that the processor
   emulated in the VM is not sufficient for Solaris 10. Older versions
   might work.)
 * NetBSD/arc doesn't boot -  but apparently others have had success.
+* I cannot get Solaris 11 to boot on Qemu without panicing. It cannot
+see the discs. Ironically I cannot get it to boot on Oracle VirtualBox
+either - same panicing problem.
 
 See also: 
 
@@ -125,8 +131,14 @@ The sparc64 bit was based on work in this article:
 * https://virtuallyfun.com/wordpress/2015/01/14/netbsd-6-1-5-sparc64-on-qemu/
 * https://wiki.qemu.org/Documentation/Platforms/SPARC
 
+Solaris 8:
+http://tyom.blogspot.com/2009/12/solaris-under-qemu-how-to.html
+
 This was helpful for NetBSD/MacPPC:
 * https://wiki.qemu.org/Documentation/Platforms/PowerPC
+
+Archive.org holds old Solaris DVDs:
+*  https://archive.org/details/solaris8_703sparc
 
 ------------------------------------------------------------------------
 2. Qemu for NetBSD/arm64

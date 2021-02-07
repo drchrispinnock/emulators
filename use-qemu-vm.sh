@@ -11,6 +11,7 @@
 # Debian - amd64
 # Solaris 10 - i386
 # Plan9 - amd64
+# Solaris 8 - sparc64
 
 # Usage: $0 [[[[[OS] Arch] NOGUI] Size]
 # e.g.
@@ -136,6 +137,12 @@ case $OS in
 			EXTRAFLAGS="-M q35"
 			VERS=11 # Still has trouble on discs
 			;;
+			sparc)
+			VERS=8 # 10 doesn't work on Qemu; 9 might
+			EXTRAFLAGS="-M SS-20"
+			CURSES="-nographic"
+			OFWBOOT="-prom-env auto-boot?=false"
+			;;
 			*)
 			echo "$OS/$ARCH not supported">&2
 			exit 1
@@ -241,6 +248,7 @@ case $OS in
 	fi
 	ISO="sol-$VERS-u11-ga-$ARCH1-dvd.iso"
 	[ "$VERS" = "11" ] && ISO="sol-11_4-text-$ARCH1.iso"
+	[ "$VERS" = "8" ] && ISO="Solaris8.iso"
 	URL="" #Not used for Solaris
 	;;
 	NetBSD)
@@ -295,6 +303,7 @@ case $OS in
 		if [ ! -f "$ISO" ]; then
 			echo "### Please download the ISO: $ISO from Oracle">&2
 			echo "### You will need a login">&2
+			echo "### Older versions may be at archive.org">&2
 			echo "### Place them in $FINALTARGET">&2
 			exit 1
 		fi
@@ -356,7 +365,7 @@ case $ARCH in
 	[ "$SETUP" = "1" ] && INSTALLFLAGS="-drive file=$ISO,format=raw,if=ide,bus=1,unit=0,media=cdrom,readonly=on"
 	;;
 	sparc)
-	QEMUFLAGS="-drive file=$IMAGE,if=scsi,bus=0,unit=0,media=disk -net user -net nic"
+	QEMUFLAGS="$OFWBOOT -drive file=$IMAGE,if=scsi,bus=0,unit=0,media=disk -net user -net nic"
 	[ "$SETUP" = "1" ] && INSTALLFLAGS="-drive file=$ISO,format=raw,if=scsi,bus=0,unit=2,media=cdrom,readonly=on"
   ;;
 	*)
