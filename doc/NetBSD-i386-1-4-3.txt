@@ -1,0 +1,62 @@
+
+NetBSD 1.4.3 on qemu
+--------------------
+
+I wanted to install this out of nostalgia. I first used NetBSD 1.3
+and 1.4.* was on my first work computer. One key thing about 1.4 on
+the i386 architecture is that it didn't use the ELF binary format -
+it still used the a.out demand pageable executables. I managed to
+follow the procedure to update it by source and hand to 1.5 with ELF.
+(I think christos at netbsd.org wrote that procedure.)
+
+Anyway, for qemu the network interface has to be chosen specifically 
+to work. rtl doesn't work, nor does ne2k_isa. Use ne2k_pci. B
+eware also of the Qemu on Mac bug - get the installation sources 
+locally is my advice.
+
+If you trust me:
+https://cp1888.files.wordpress.com/2021/02/netbsd143.iso_.zip
+
+Or if you don't and trust the NetBSD Archive:
+
+1. Grab the installation sets and put them in a dir called 
+   cdsources/i386/binary/sets:
+ http://archive.netbsd.org/pub/NetBSD-archive/NetBSD-1.4.3/i386/binary/sets/
+
+2. Grab the big installation floppy:
+ http://archive.netbsd.org/pub/NetBSD-archive/NetBSD-1.4.3/i386/installation/floppy/boot-big.fs
+ 
+ and put it in cdsources.
+
+3. On a machine where you have mkisofs
+	mkisofs -o NetBSD143.iso -b boot-big.fs -c boot.catalog -l -J -R -allow-leading-dots cdsources
+
+You can also boot directly from boot-big.fs of course and install
+over the network (but beware of the Qemu/Mac OS X bug for network)
+
+To create a disc image:
+	qemu-img create -f raw netbsd-disk-i386.img 4G
+
+To install off the CD:
+	qemu-system-i386 -m 256M -hda netbsd-disk-i386.img -net user -net nic,model=ne2k_pci -cdrom NetBSD143.iso -boot d
+
+or to boot off the floppy:
+  qemu-system-i386 -m 256M -fda boot-big.fs -hda netbsd-disk-i386.img -net user -net nic,model=ne2k_pci -boot a
+
+You can -cdrom NetBSD143.iso to the floppy boot too if you like.
+
+For network, use 10.0.2.102/255.255.255.0, gate 10.0.2.2, DNS 10.0.2.3
+
+When you've finished, exit and halt the system. Stop Qemu and then:
+
+To boot regularly:
+	qemu-system-i386 -m 256M -hda netbsd-disk-i386.img -net user -net nic,model=ne2k_pci -boot c
+
+You might need to go into the system single user to fix rc.conf. DHCP
+client options are available in there. 
+Set dhclient=YES and put the network inferface (ne2?) in the flags
+variable.
+
+It's 1.4.3 so there's no ssh binaries as standard. Good luck with a.out binaries! :-)
+
+

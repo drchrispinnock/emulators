@@ -16,14 +16,15 @@ macppc  qemu***
 arm64   qemu* 
 
 pmax    gxemul
-cats	gxemul+
+cats	  gxemul+
 
 vax	simh
 
 * see section 2
 ** has trouble booting with graphics (we use -nographic by default)
 *** NetBSD 9.1 doesn't boot, we use 9.0
-+ gxemul says it works, but I can't get 9.1 to install (it boots)
++ gxemul says it works for NetBSD 4.0.1. I can't get 5* onwards to
+extract base.tgz. Kernel panic
 ++ regular boot asks for the root device
 +++ Solaris 10 for i386. I cannot get the 11 installation iso to boot 
 on amd64, but the VM images may work.
@@ -71,7 +72,7 @@ thing. I will be removing them soon. See README.OLD for docs on these.)
 CTRL-C will kill an qemu if it is running in a graphics window.
 CTRL-A x will exit a qemu running in nographic mode.
 
-The following work:
+The following work with this script:
 * NetBSD/amd64, i386, sparc, sparc64 (all 9.1), macppc (9.0)
 * OpenBSD/amd64, i386, sparc64 (all 6.8)
 * FreeBSD/i386, amd64, sparc64 (all 12.2)
@@ -79,6 +80,9 @@ The following work:
 * Debian/amd64 (latest)
 * Plan 9/amd64 (latest)
 
+Many other combinations work with Qemu but you might have to
+experiment with options to get it to work. For example:
+* NetBSD/i386 1.4.3 - see the doc directory
 
 Quirks:
 -------
@@ -164,11 +168,13 @@ XQuartz).
 
 The following work:
 * NetBSD/pmax 
+* NetBSD/cats 4.0.1 (!)
 
-(I've not tried many others at this point)
+(I've not tried others at this point. Years ago this emulator supported
+many NetBSD ports.)
 
 The following don't work:
-* NetBSD/cats - boots but panics during base.tgz extract
+* NetBSD/cats 5* onwards - boots but panics during base.tgz extract
 
 ------------------------------------------------------------------------
 4. Simh & NetBSD/vax

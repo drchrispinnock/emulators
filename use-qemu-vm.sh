@@ -23,6 +23,8 @@ USAGE="$0 [-i] [-c] [-n] [-d] [-t TargetDir] [-m memory] [-s hd size] [OS [arch 
 
 # CDNs
 NETBSDCDN="https://cdn.netbsd.org/pub/NetBSD"
+NETBSDARCHIVE="http://archive.netbsd.org/pub/NetBSD-archive"
+
 OPENBSDCDN="https://cloudflare.cdn.openbsd.org/pub/OpenBSD"
 FREEBSDCDN="https://download.freebsd.org/ftp/releases"
 DEBIANCDN="https://cdimage.debian.org/debian-cd/current/"
@@ -253,6 +255,13 @@ case $OS in
 	NetBSD)
 		ISO=$OS-$VERS-$ARCH.iso
 		URL="$NETBSDCDN/NetBSD-$VERS/images/$ISO"
+		
+		A=`echo $VERS | awk -F. '{print $1}'`
+    if [ "$A" -lt 7 ]; then 
+		  # Use the archives
+			NETBSDCDN="$NETBSDARCHIVE"
+		fi
+		
 		;;
 	OpenBSD)
 		DOTLESS=`echo $VERS | sed -e 's/\.//g'`
