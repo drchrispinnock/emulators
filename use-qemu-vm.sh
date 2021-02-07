@@ -39,6 +39,7 @@ SIZE=8G
 MEMORY=256M
 EXTRAFLAGS=""
 SETUP="0"
+IMGFORMAT="qcow2"
 
 NEEDISO="" # Need ISO for regular operation
 
@@ -142,7 +143,7 @@ case $OS in
 			VERS=8 # 10 doesn't work on Qemu; 9 might
 			EXTRAFLAGS="-M SS-20"
 			CURSES="-nographic"
-			OFWBOOT="-prom-env auto-boot?=false"
+			#OFWBOOT="-prom-env auto-boot?=false"
 			;;
 			*)
 			echo "$OS/$ARCH not supported">&2
@@ -322,7 +323,7 @@ case $OS in
 		echo "Using existing hard disc $IMAGE">&2
 	else
 		echo "Creating $IMAGE of size $SIZE">&2
-		qemu-img create -f raw "$IMAGE" $SIZE
+		qemu-img create -f $IMGFORMAT "$IMAGE" $SIZE
 		echo "(Using Setup mode)">&2
 		SETUP="1"
 	fi
