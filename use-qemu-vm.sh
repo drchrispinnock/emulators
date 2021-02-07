@@ -11,7 +11,6 @@
 # Debian - amd64
 # Solaris 10 - i386
 # Plan9 - amd64
-# Solaris 8 - sparc64
 
 # Usage: $0 [[[[[OS] Arch] NOGUI] Size]
 # e.g.
@@ -248,7 +247,7 @@ case $OS in
 	fi
 	ISO="sol-$VERS-u11-ga-$ARCH1-dvd.iso"
 	[ "$VERS" = "11" ] && ISO="sol-11_4-text-$ARCH1.iso"
-	[ "$VERS" = "8" ] && ISO="Solaris8.iso"
+	[ "$VERS" = "8" ] && ISO="Solaris8.iso" # Doesn't work yet
 	URL="" #Not used for Solaris
 	;;
 	NetBSD)

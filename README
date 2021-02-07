@@ -78,7 +78,7 @@ The following work:
 * Solaris 10/i386
 * Debian/amd64 (latest)
 * Plan 9/amd64 (latest)
-* Solaris 8/sparc (with no graphic)
+
 
 Quirks:
 -------
@@ -122,6 +122,7 @@ Does not work:
 * I cannot get Solaris 11 to boot on Qemu without panicing. It cannot
 see the discs. Ironically I cannot get it to boot on Oracle VirtualBox
 either - same panicing problem.
+* Solaris 8/sparc - having trouble with the disc images
 
 See also: 
 
@@ -131,7 +132,7 @@ The sparc64 bit was based on work in this article:
 * https://virtuallyfun.com/wordpress/2015/01/14/netbsd-6-1-5-sparc64-on-qemu/
 * https://wiki.qemu.org/Documentation/Platforms/SPARC
 
-Solaris 8:
+Solaris 8 and earlier investigation:
 http://tyom.blogspot.com/2009/12/solaris-under-qemu-how-to.html
 
 This was helpful for NetBSD/MacPPC:
