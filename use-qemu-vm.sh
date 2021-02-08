@@ -385,7 +385,8 @@ esac
 
 echo "#!/bin/sh" >boot.sh
 echo "# This is an experiment" >>boot.sh
-echo "qemu-system-$EMU $EXTRAFLAGS $CURSES $QEMUFLAGS -boot c" >>boot.sh
+echo "# Last boot was with:" >>boot.sh
+echo "emu-system-$EMU $EXTRAFLAGS $CURSES $QEMUFLAGS $INSTALLFLAGS $BOOT">>boot.sh
 
 echo "Starting emulator"
 echo "qemu-system-$EMU $EXTRAFLAGS $CURSES $QEMUFLAGS $INSTALLFLAGS $BOOT"
