@@ -383,12 +383,15 @@ case $ARCH in
 	;;
 esac
 
+
+COMMAND="qemu-system-$EMU $EXTRAFLAGS $CURSES $QEMUFLAGS $INSTALLFLAGS $BOOT"
+
 echo "#!/bin/sh" >boot.sh
 echo "# This is an experiment" >>boot.sh
 echo "# Last boot was with:" >>boot.sh
-echo "emu-system-$EMU $EXTRAFLAGS $CURSES $QEMUFLAGS $INSTALLFLAGS $BOOT">>boot.sh
+echo "$COMMAND" >> boot.sh
 
 echo "Starting emulator"
-echo "qemu-system-$EMU $EXTRAFLAGS $CURSES $QEMUFLAGS $INSTALLFLAGS $BOOT"
+echo "$COMMAND"
 sleep 2
-qemu-system-$EMU $EXTRAFLAGS $CURSES $QEMUFLAGS $INSTALLFLAGS $BOOT
+$COMMAND
