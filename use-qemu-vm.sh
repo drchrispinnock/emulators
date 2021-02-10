@@ -16,7 +16,7 @@
 # e.g.
 # $0 [-i] OpenBSD i386 - run the installer
 # $0 OpenBSD i386 - run the VM or the installer if it isn't setup
-USAGE="$0 [-i] [-c] [-n] [-d] [-t TargetDir] [-m memory] [-s hd size] [OS [arch [ver]]]\n  -i run installer ISO\n  -c use -display curses\n  -n use -nographic (overrides -c)\n  -d more output\n  use -t to specify an alternative target directory for files\n\n  OS can be NetBSD, OpenBSD, FreeBSD, Plan9, Debian or Solaris\n"
+USAGE="$0 [-X] [-i] [-c] [-n] [-d] [-t TargetDir] [-m memory] [-s hd size] [OS [arch [ver]]]\n  -i run installer ISO\n  -c use -display curses\n  -n use -nographic (overrides -c)\n  -d more output\n  use -t to specify an alternative target directory for files\n  use -X to clean up the ISO file and start again\n\n  OS can be NetBSD, OpenBSD, FreeBSD, Plan9, Debian or Solaris\n"
 
 # Set the environment variable QEMUTARGET if you want an
 # alternative to $HOME/VM/Qemu
@@ -42,6 +42,7 @@ SETUP="0"
 IMGFORMAT="qcow2"
 
 NEEDISO="" # Need ISO for regular operation
+ZAPISO="" # start again with the ISO
 
 CLISIZE=""
 CLIMEM=""
@@ -65,6 +66,7 @@ while [ $# -gt 0 ]; do
 	-n|--nographic)				
 			CURSES="-nographic"; ;;
 	-t)			  QEMUTARGET="$2"; shift; ;;
+	-X)			  ZAPISO="1"; ;;
 	-m)			  CLIMEM="$2"; shift; ;;
 	-s)       CLISIZE="$2"; shift; ;;
 	-h|--help)		
@@ -331,6 +333,11 @@ case $OS in
 	if [ "$SETUP" = "1" ] ; then
 		BOOT="-boot d"
 	fi
+
+if [ "$ZAPISO" = "1" ]; then
+	echo "Removing ISO as requested">&2
+	rm -f "$ISO"
+fi
 
 if [ -f "$ISO" ]; then
   echo "Installation $ISO file present">&2
