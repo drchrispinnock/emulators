@@ -66,10 +66,10 @@ use-qemu-vm.sh [-i] [-c] [-n] [-d] [-t TargetDir] [OS [arch [ver]]]
    * -c is useful for environments such as AWS or where there is no
      useful graphics library. -c seems to work better with i386 &
      amd64. -n is better for the other platforms.
-   
-(The setup-qemu-vm & run-qemu-vm scripts are still here, but they are
-deprecated. It was silly having two scripts that did almost the same 
-thing. I will be removing them soon. See README.OLD for docs on these.)
+
+   * The script deposits a script called boot.sh in the VM directory
+   which contains the command last used to boot the VM. So if you 
+   are happy with the last run, you can use this script going forward.
 
 CTRL-C will kill an qemu if it is running in a graphics window.
 CTRL-A x will exit a qemu running in nographic mode.
