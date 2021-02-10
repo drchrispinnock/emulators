@@ -180,7 +180,7 @@ case $OS in
 		
   	;;
 	OpenBSD)
-  	VERS=6.8
+  	VERS=6.9
 		case $ARCH in
 			i386|sparc64|amd64)
 				# Supported for OpenBSD

@@ -76,7 +76,7 @@ case $OS in
 		
   	;;
 	OpenBSD)
-		VERS=6.8
+		VERS=6.9
 		case $ARCH in
 #			sgi)
 #				;;
