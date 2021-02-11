@@ -11,7 +11,7 @@ mop up and keep all the pieces.
 i386    qemu    qemu    qemu    qemu
 amd64   qemu    qemu    qemu    +++     qemu   qmu^^
 sparc64	qemu    qemu++  qemu**
-sparc   qemu                    ^
+sparc   qemu                    qemu^
 macppc  qemu***
 arm64   qemu* 
 
@@ -28,8 +28,8 @@ extract base.tgz. Kernel panic
 ++ regular boot asks for the root device
 +++ Solaris 10 for i386. I cannot get the 11 installation iso to boot 
 on amd64, but the VM images may work.
-^ Solaris 8 sparc will work but you need to sort drive geometries
-  See doc/Solaris-sparc-8.txt
+^ Solaris 7, 8 & 9 sparc will work but you need to sort drive geometries
+  See doc/Solaris-sparc-789.txt
 ^^ others may work - I haven't tried
 
 ------------------------------------------------------------------------
@@ -85,7 +85,7 @@ The following work with this script:
 Many other combinations work with Qemu but you might have to
 experiment with options to get it to work. For example:
 * NetBSD/i386 1.4.3 - see the doc directory
-* Solaris/sparc 8 - see the doc directory
+* Solaris/sparc 7, 8 & 9 - see the doc directory
 
 Quirks:
 -------
