@@ -245,14 +245,22 @@ case $OS in
 	;;
 	
 	Solaris)
-		
+	
+	# 10/x86 works and is our default
+	# 10/sparc/64 doesn't
 	ARCH1=x86
 	if [ "$ARCH" = "sparc64" ]; then 
 		ARCH1=sparc # This isn't used but is here for completeness
 	fi
 	ISO="sol-$VERS-u11-ga-$ARCH1-dvd.iso"
+
+	# 8 works, but you need to understand disklabels	
+	[ "$VERS" = "7" ] && ISO="Solaris7-$ARCH.iso" 
+	[ "$VERS" = "8" ] && ISO="Solaris8-$ARCH.iso" 
+
+	# 11 won't boot properly but it won't boot on virtual box either
+	#
 	[ "$VERS" = "11" ] && ISO="sol-11_4-text-$ARCH1.iso"
-	[ "$VERS" = "8" ] && ISO="Solaris8.iso" # Doesn't work yet
 	URL="" #Not used for Solaris
 	;;
 	NetBSD)
