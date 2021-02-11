@@ -252,14 +252,11 @@ case $OS in
 	if [ "$ARCH" = "sparc64" ]; then 
 		ARCH1=sparc # This isn't used but is here for completeness
 	fi
-	ISO="sol-$VERS-u11-ga-$ARCH1-dvd.iso"
+	# 7,8,9 let the user do the work unfortunately
+	ISO="Solaris$VERS-$ARCH.iso" 
 
-	# 8 works, but you need to understand disklabels	
-	[ "$VERS" = "7" ] && ISO="Solaris7-$ARCH.iso" 
-	[ "$VERS" = "8" ] && ISO="Solaris8-$ARCH.iso" 
-
+	[ "$VERS" = "10" ] && ISO="sol-$VERS-u11-ga-$ARCH1-dvd.iso"
 	# 11 won't boot properly but it won't boot on virtual box either
-	#
 	[ "$VERS" = "11" ] && ISO="sol-11_4-text-$ARCH1.iso"
 	URL="" #Not used for Solaris
 	;;
