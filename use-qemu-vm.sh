@@ -312,19 +312,6 @@ if [ "$?" != "0" ]; then
 	exit 1
 fi
 
-# OS dependencies on ISO download - Solaris at the mo
-#
-case $OS in
-	Solaris)
-		if [ ! -f "$ISO" ]; then
-			echo "### Please download the ISO: $ISO from Oracle">&2
-			echo "### You will need a login">&2
-			echo "### Older versions may be at archive.org">&2
-			echo "### Place them in $FINALTARGET">&2
-			exit 1
-		fi
-		;;
-	esac
 
 	if [ -f "$IMAGE" ]; then
 		echo "Using existing hard disc $IMAGE">&2
@@ -349,6 +336,14 @@ if [ -f "$ISO" ]; then
 else
 	
 	if [ "$SETUP" = "1" ] || [ "$NEEDISO" = 1 ]; then
+		# OS dependencies on ISO download - Solaris at the mo
+		if [ "$OS" = "Solaris" ]; then
+			echo "### Please download the ISO: $ISO from Oracle">&2
+			echo "### You will need a login">&2
+			echo "### Older versions may be at archive.org">&2
+			echo "### Place them in $FINALTARGET">&2
+			exit 1
+		fi
 	
 	  INTERMEDIATE="$ISO"
 		if [ "$BUNZIPISO" = "1" ]; then
