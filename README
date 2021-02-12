@@ -25,7 +25,7 @@ vax	simh
 *** NetBSD 9.1 doesn't boot, we use 9.0
 + gxemul says it works for NetBSD 4.0.1. I can't get 5* onwards to
 extract base.tgz. Kernel panic
-++ regular boot asks for the root device
+++ regular boot asks for the root device - just use wd0a
 +++ Solaris 10 for i386. I cannot get the 11 installation iso to boot 
 on amd64, but the VM images may work.
 ^ Solaris 7, 8 & 9 sparc will work but you need to sort drive geometries
