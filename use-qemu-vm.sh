@@ -16,7 +16,7 @@
 # e.g.
 # $0 [-i] OpenBSD i386 - run the installer
 # $0 OpenBSD i386 - run the VM or the installer if it isn't setup
-USAGE="$0 [-X] [-i] [-c] [-n] [-d] [-t TargetDir] [-m memory] [-s hd size] [OS [arch [ver]]]\n  -i run installer ISO\n  -c use -display curses\n  -n use -nographic (overrides -c)\n  -d more output\n  use -t to specify an alternative target directory for files\n  use -X to clean up the ISO file and start again\n\n  OS can be NetBSD, OpenBSD, FreeBSD, Plan9, Debian or Solaris\n"
+USAGE="$0 [-X] [-F] [-i] [-c] [-n] [-d] [-t TargetDir] [-m memory] [-s hd size] [OS [arch [ver]]]\n  -i run installer ISO\n  -c use -display curses\n  -n use -nographic (overrides -c)\n  -d more output\n  use -t to specify an alternative target directory for files\n  use -X to clean up the ISO file and start again\n  use -F to just fetch the ISO\n\n  OS can be NetBSD, OpenBSD, FreeBSD, Plan9, Debian or Solaris\n"
 
 # Set the environment variable QEMUTARGET if you want an
 # alternative to $HOME/VM/Qemu
@@ -43,6 +43,7 @@ IMGFORMAT="qcow2"
 
 NEEDISO="" # Need ISO for regular operation
 ZAPISO="" # start again with the ISO
+ONLYGETISO="" # start again with the ISO
 
 CLISIZE=""
 CLIMEM=""
@@ -67,6 +68,7 @@ while [ $# -gt 0 ]; do
 			CURSES="-nographic"; ;;
 	-t)			  QEMUTARGET="$2"; shift; ;;
 	-X)			  ZAPISO="1"; ;;
+	-F)			  ONLYGETISO="1"; NEEDISO="1" ;;
 	-m)			  CLIMEM="$2"; shift; ;;
 	-s)       CLISIZE="$2"; shift; ;;
 	-h|--help)		
@@ -210,7 +212,7 @@ case $OS in
 			esac
 			;;
 		Debian)
-		VERS=10.7.0
+		VERS=10.8.0
 		
 			case $ARCH in
 				amd64)
@@ -390,6 +392,7 @@ case $ARCH in
 	;;
 esac
 
+[ "$ONLYGETISO" = "1" ] && echo "Exiting - only getting iso" && exit 0
 
 COMMAND="qemu-system-$EMU $EXTRAFLAGS $CURSES $QEMUFLAGS $INSTALLFLAGS $BOOT"
 
