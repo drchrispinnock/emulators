@@ -364,10 +364,12 @@ else
 fi
 
 INSTALLFLAGS=""
+NETUSER="-net user"
+NETNIC="-net nic"
 
 case $ARCH in
 	i386|amd64)
-	QEMUFLAGS="-m $MEMORY -hda $IMAGE -net user -net nic"
+	QEMUFLAGS="-m $MEMORY -hda $IMAGE"
 	[ "$SETUP" = "1" ] && INSTALLFLAGS="-cdrom $ISO"
   ;;
   macppc|powerpc)
@@ -379,11 +381,11 @@ case $ARCH in
 	INSTALLFLAGS="-cdrom $ISO" # CD is needed for regular running...
   ;;
 	sparc64)
-	QEMUFLAGS="-drive file=$IMAGE,if=ide,bus=0,unit=0 -net user -net nic"
+	QEMUFLAGS="-drive file=$IMAGE,if=ide,bus=0,unit=0"
 	[ "$SETUP" = "1" ] && INSTALLFLAGS="-drive file=$ISO,format=raw,if=ide,bus=1,unit=0,media=cdrom,readonly=on"
 	;;
 	sparc)
-	QEMUFLAGS="$OFWBOOT -drive file=$IMAGE,if=scsi,bus=0,unit=0,media=disk -net user -net nic"
+	QEMUFLAGS="$OFWBOOT -drive file=$IMAGE,if=scsi,bus=0,unit=0,media=disk"
 	[ "$SETUP" = "1" ] && INSTALLFLAGS="-drive file=$ISO,format=raw,if=scsi,bus=0,unit=2,media=cdrom,readonly=on"
   ;;
 	*)
@@ -394,7 +396,7 @@ esac
 
 [ "$ONLYGETISO" = "1" ] && echo "Exiting - only getting iso" && exit 0
 
-COMMAND="qemu-system-$EMU $EXTRAFLAGS $CURSES $QEMUFLAGS $INSTALLFLAGS $BOOT"
+COMMAND="qemu-system-$EMU $EXTRAFLAGS $CURSES $INSTALLFLAGS $NETUSER $NETNIC $BOOT $QEMUFLAGS"
 
 echo "#!/bin/sh" >boot.sh
 echo "# This is an experiment" >>boot.sh
