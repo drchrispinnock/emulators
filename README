@@ -38,8 +38,12 @@ on amd64, but the VM images may work.
 
 use-qemu-vm.sh [-i] [-c] [-n] [-d] [-t TargetDir] [OS [arch [ver]]]
  -i run installer ISO (i.e. setup)
+ -P port - setup port forwarding from port to 22 (then you can
+ 			ssh -p port localhost
  -c use -display curses
  -n use -nographic (overrides -c)  
+ -X zap the ISO and download it
+ -F just fetch the ISO
  -d more output  
     use -t to specify an alternative target directory for files
     
