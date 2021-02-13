@@ -399,10 +399,15 @@ esac
 
 COMMAND="qemu-system-$EMU $EXTRAFLAGS $CURSES $INSTALLFLAGS $NETUSER $NETNIC $BOOT $QEMUFLAGS"
 
-echo "#!/bin/sh" >boot.sh
-echo "# This is an experiment" >>boot.sh
-echo "# Last boot was with:" >>boot.sh
-echo "$COMMAND" >> boot.sh
+SCRIPT="boot.sh"
+[ "$SETUP" = "1" ] && SCRIPT="install.sh"
+
+echo "#!/bin/sh" >lastboot.sh
+echo "# This is an experiment" >>lastboot.sh
+echo "# Last boot was with:" >>lastboot.sh
+echo "$COMMAND" >> lastboot.sh
+
+cp lastboot.sh $SCRIPT
 
 echo "Starting emulator"
 echo "$COMMAND"
