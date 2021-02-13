@@ -36,7 +36,6 @@ DEBUG=0
 OS=NetBSD
 ARCH=amd64
 SIZE=8G
-MEMORY=256M
 EXTRAFLAGS=""
 SETUP="0"
 IMGFORMAT="qcow2"
@@ -290,7 +289,9 @@ case $OS in
 esac
 
 [ "$CLISIZE" != "" ] && SIZE=$CLISIZE
+
 [ "$CLIMEM" != "" ] && MEMORY=$CLIMEM
+[ "$MEMORY" != "" ] && MEMORY="-m $MEMORY"
 
 FINALTARGET="$TARGET/$ARCH/$VERS"
 if [ "$DEBUG" = "1" ]; then
@@ -370,7 +371,7 @@ fi
 
 case $ARCH in
 	i386|amd64|hppa)
-	QEMUFLAGS="-m $MEMORY -hda $IMAGE"
+	QEMUFLAGS="-hda $IMAGE"
 	[ "$SETUP" = "1" ] && INSTALLFLAGS="-cdrom $ISO"
 	;;
   macppc|powerpc)
@@ -397,7 +398,7 @@ esac
 
 [ "$ONLYGETISO" = "1" ] && echo "Exiting - only getting iso" && exit 0
 
-COMMAND="qemu-system-$EMU $EXTRAFLAGS $CURSES $INSTALLFLAGS $NETUSER $NETNIC $BOOT $QEMUFLAGS"
+COMMAND="qemu-system-$EMU $EXTRAFLAGS $MEMORY $CURSES $INSTALLFLAGS $NETUSER $NETNIC $BOOT $QEMUFLAGS"
 
 SCRIPT="boot.sh"
 [ "$SETUP" = "1" ] && SCRIPT="install.sh"
