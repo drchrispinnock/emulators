@@ -9,6 +9,7 @@
 # OpenBSD - amd64, i386, sparc64
 # FreeBSD - i386, amd64, sparc64
 # Solaris - i386
+# Solaris 8 - sparc64
 
 # Usage: $0 [[[[[OS] Arch] NOGUI] Size] Target Dir]
 # e.g.
