@@ -385,7 +385,7 @@ fi
 
 case $ARCH in
 	i386|amd64)
-	QEMUFLAGS="-m $MEMORY -hda $IMAGE"
+	QEMUFLAGS="-hda $IMAGE"
 	[ "$SETUP" = "1" ] && INSTALLFLAGS="-cdrom $ISO"
   ;;
   macppc|powerpc)
@@ -404,7 +404,12 @@ case $ARCH in
 	QEMUFLAGS="$OFWBOOT -drive file=$IMAGE,if=scsi,bus=0,unit=0,media=disk"
 	[ "$SETUP" = "1" ] && INSTALLFLAGS="-drive file=$ISO,format=raw,if=scsi,bus=0,unit=2,media=cdrom,readonly=on"
   ;;
+	alpha)
+	QEMUFLAGS="$OFWBOOT -hda $IMAGE"
+	[ "$SETUP" = "1" ] && INSTALLFLAGS="-cdrom $ISO"
+	;;
 	*)
+		# Crash out!
 		echo "QEMUFlags case - $OS/$ARCH - I should not have been reached!">&2
 		exit 1
 	;;
@@ -412,7 +417,7 @@ esac
 
 [ "$ONLYGETISO" = "1" ] && echo "Exiting - only getting iso" && exit 0
 
-COMMAND="qemu-system-$EMU $EXTRAFLAGS $CURSES $INSTALLFLAGS $NETUSER $NETNIC $BOOT $QEMUFLAGS"
+COMMAND="qemu-system-$EMU -m $MEMORY $EXTRAFLAGS $CURSES $INSTALLFLAGS $NETUSER $NETNIC $BOOT $QEMUFLAGS"
 
 echo "#!/bin/sh" >boot.sh
 echo "# This is an experiment" >>boot.sh
