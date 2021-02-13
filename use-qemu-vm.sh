@@ -41,9 +41,9 @@ EXTRAFLAGS=""
 SETUP="0"
 IMGFORMAT="qcow2"
 
-NEEDISO="" # Need ISO for regular operation
-ZAPISO="" # start again with the ISO
-ONLYGETISO="" # start again with the ISO
+NEEDISO="" 	# Need ISO for regular operation
+ZAPISO="" 	# start again with the ISO
+ONLYGETISO="" 	# start again with the ISO
 NOIPV6=""	# Some VMs have trouble connecting
 
 CLISIZE=""
