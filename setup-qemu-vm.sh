@@ -5,7 +5,7 @@
 # Chris Pinnock Feb/2021 - No Warranty - Use at your own risk!
 #
 # Supported architectures
-# NetBSD - amd64, i386, sparc, sparc64, macppc
+# NetBSD - amd64, i386, sparc, sparc64, macppc, hppa
 # OpenBSD - amd64, i386, sparc64
 # FreeBSD - i386, amd64, sparc64
 # Solaris - i386
