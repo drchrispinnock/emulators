@@ -16,7 +16,7 @@
 # e.g.
 # $0 [-i] OpenBSD i386 - run the installer
 # $0 OpenBSD i386 - run the VM or the installer if it isn't setup
-USAGE="$0 [-X] [-F] [-i] [-c] [-n] [-d] [-P port] [-t TargetDir] [-m memory] [-s hd size] [OS [arch [ver]]]\n  -i run installer ISO\n  -c use -display curses\n  -n use -nographic (overrides -c)\n  -d more output\n  use -P to setup a local SSH port\n  use -t to specify an alternative target directory for files\n  use -X to clean up the ISO file and start again\n  use -F to just fetch the ISO\n\n  OS can be NetBSD, OpenBSD, FreeBSD, Plan9, Debian or Solaris\n"
+USAGE="$0 [-6] [-X] [-F] [-i] [-c] [-n] [-d] [-P port] [-t TargetDir] [-m memory] [-s hd size] [OS [arch [ver]]]\n  -i run installer ISO\n  -c use -display curses\n  -n use -nographic (overrides -c)\n  -d more output\n  use -P to setup a local SSH port\n  use -t to specify an alternative target directory for files\n  use -X to clean up the ISO file and start again\n  use -F to just fetch the ISO\n  -6 specify ipv6=no (some VMs have trouble connecting)\n\n  OS can be NetBSD, OpenBSD, FreeBSD, Plan9, Debian or Solaris\n"
 
 # Set the environment variable QEMUTARGET if you want an
 # alternative to $HOME/VM/Qemu
@@ -44,6 +44,7 @@ IMGFORMAT="qcow2"
 NEEDISO="" # Need ISO for regular operation
 ZAPISO="" # start again with the ISO
 ONLYGETISO="" # start again with the ISO
+NOIPV6=""	# Some VMs have trouble connecting
 
 CLISIZE=""
 CLIMEM=""
@@ -68,6 +69,7 @@ while [ $# -gt 0 ]; do
 			CURSES="-nographic"; ;;
 	-t)			  QEMUTARGET="$2"; shift; ;;
 	-X)			  ZAPISO="1"; ;;
+	-6)			  NOIPV6="1"; ;;
 	-F)			  ONLYGETISO="1"; NEEDISO="1" ;;
 	-m)			  CLIMEM="$2"; shift; ;;
 	-P)			  SSHPORT="$2"; shift; ;;
@@ -187,6 +189,10 @@ case $OS in
 		case $ARCH in
 			i386|sparc64|amd64)
 				# Supported for OpenBSD
+				;;
+			alpha)
+				# Try
+				VERS=6.8
 				;;
 			*)
 				echo "$OS/$ARCH not supported">&2
@@ -368,9 +374,14 @@ INSTALLFLAGS=""
 NETUSER="-net user"
 NETNIC="-net nic"
 
+if [ "$NOIPV6" != "" ]; then
+	NETUSER="$NETUSER,ipv6=no"
+fi
+
 if [ "$SSHPORT" != "" ]; then
 	NETUSER="$NETUSER,hostfwd=tcp::${SSHPORT}-:22"
 fi
+
 
 case $ARCH in
 	i386|amd64)
