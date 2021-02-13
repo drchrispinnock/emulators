@@ -14,9 +14,10 @@ sparc64	qemu    qemu++  qemu**
 sparc   qemu			+++
 macppc  qemu***
 arm64   qemu* 
+hppa	qemu
 
 pmax    gxemul
-cats	  gxemul+
+cats	gxemul+
 
 vax	simh
 

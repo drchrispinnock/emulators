@@ -159,13 +159,9 @@ case $OS in
 	NetBSD)
 		VERS=9.1
 		case $ARCH in
-			i386)
-				# Supported for NetBSD
-				;;
-				sparc64|sparc)
-#				EXTRAFLAGS="-nographic" # XXX not sure this is needed
-				;;
-			amd64)
+			i386|sparc64|sparc|amd64|hppa)
+				# Supported - no tuning needed
+				
 				;;
 			macppc)
 				VERS=9.0	# 9.1 doesn't boot
@@ -373,10 +369,10 @@ if [ "$SSHPORT" != "" ]; then
 fi
 
 case $ARCH in
-	i386|amd64)
+	i386|amd64|hppa)
 	QEMUFLAGS="-m $MEMORY -hda $IMAGE"
 	[ "$SETUP" = "1" ] && INSTALLFLAGS="-cdrom $ISO"
-  ;;
+	;;
   macppc|powerpc)
 	# I need the ISO to boot from after installation
 	#
