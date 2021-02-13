@@ -180,8 +180,13 @@ case $OS in
 	OpenBSD)
   	VERS=6.9
 		case $ARCH in
-			i386|sparc64|amd64|hppa)
+			i386|sparc64|amd64)
 				# Supported for OpenBSD
+				;;
+			hppa)
+				echo "# XXXX"
+				echo "# XXXX Warning - OpenBSD/hppa installs but does not seem to boot normally"
+				echo "# XXXX"
 				;;
 			*)
 				echo "$OS/$ARCH not supported">&2

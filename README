@@ -14,7 +14,7 @@ sparc64	qemu    qemu++  qemu**
 sparc   qemu			+++
 macppc  qemu***
 arm64   qemu* 
-hppa	qemu	qemu^^^
+hppa	qemu	(qemu^^^)
 
 pmax    gxemul
 cats	gxemul+
@@ -32,7 +32,8 @@ vax	simh
 ^   Solaris 7, 8 & 9 sparc will work but you need to sort drive geometries
     See doc/Solaris-sparc-789.txt
 ^^  Others may work - I haven't tried
-^^^ OpenBSD/hppa asks for boot device on normal boot
+^^^ OpenBSD/hppa asks for boot device on normal boot and gets stuck
+    on pf. Boot single user and disable it in /etc/rc.conf.local
 
 ------------------------------------------------------------------------
 1. Qemu
