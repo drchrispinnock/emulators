@@ -16,13 +16,15 @@
 # e.g.
 # $0 [-i] OpenBSD i386 - run the installer
 # $0 OpenBSD i386 - run the VM or the installer if it isn't setup
-USAGE="$0 [-i] [-c] [-n] [-d] [-t TargetDir] [-m memory] [-s hd size] [OS [arch [ver]]]\n  -i run installer ISO\n  -c use -display curses\n  -n use -nographic (overrides -c)\n  -d more output\n  use -t to specify an alternative target directory for files\n\n  OS can be NetBSD, OpenBSD, FreeBSD, Plan9, Debian or Solaris\n"
+USAGE="$0 [-X] [-F] [-i] [-c] [-n] [-d] [-P port] [-t TargetDir] [-m memory] [-s hd size] [OS [arch [ver]]]\n  -i run installer ISO\n  -c use -display curses\n  -n use -nographic (overrides -c)\n  -d more output\n  use -P to setup a local SSH port\n  use -t to specify an alternative target directory for files\n  use -X to clean up the ISO file and start again\n  use -F to just fetch the ISO\n\n  OS can be NetBSD, OpenBSD, FreeBSD, Plan9, Debian or Solaris\n"
 
 # Set the environment variable QEMUTARGET if you want an
 # alternative to $HOME/VM/Qemu
 
 # CDNs
 NETBSDCDN="https://cdn.netbsd.org/pub/NetBSD"
+NETBSDARCHIVE="http://archive.netbsd.org/pub/NetBSD-archive"
+
 OPENBSDCDN="https://cloudflare.cdn.openbsd.org/pub/OpenBSD"
 FREEBSDCDN="https://download.freebsd.org/ftp/releases"
 DEBIANCDN="https://cdimage.debian.org/debian-cd/current/"
@@ -37,8 +39,11 @@ SIZE=8G
 MEMORY=256M
 EXTRAFLAGS=""
 SETUP="0"
+IMGFORMAT="qcow2"
 
 NEEDISO="" # Need ISO for regular operation
+ZAPISO="" # start again with the ISO
+ONLYGETISO="" # start again with the ISO
 
 CLISIZE=""
 CLIMEM=""
@@ -48,9 +53,9 @@ CLIMEM=""
 #CURSES="-display curses"
 CURSES=""
 
-# Get the OS from the command-line
-#
-# CLI optiosn
+SSHPORT=""
+
+# CLI options
 #
 while [ $# -gt 0 ]; do
 	case $1 in
@@ -62,7 +67,10 @@ while [ $# -gt 0 ]; do
 	-n|--nographic)				
 			CURSES="-nographic"; ;;
 	-t)			  QEMUTARGET="$2"; shift; ;;
+	-X)			  ZAPISO="1"; ;;
+	-F)			  ONLYGETISO="1"; NEEDISO="1" ;;
 	-m)			  CLIMEM="$2"; shift; ;;
+	-P)			  SSHPORT="$2"; shift; ;;
 	-s)       CLISIZE="$2"; shift; ;;
 	-h|--help)		
 				echo "$USAGE"; exit ;;
@@ -136,6 +144,12 @@ case $OS in
 			EXTRAFLAGS="-M q35"
 			VERS=11 # Still has trouble on discs
 			;;
+			sparc)
+			VERS=8 # 10 doesn't work on Qemu; 9 might
+			EXTRAFLAGS="-M SS-20"
+			CURSES="-nographic"
+			#OFWBOOT="-prom-env auto-boot?=false"
+			;;
 			*)
 			echo "$OS/$ARCH not supported">&2
 			exit 1
@@ -169,7 +183,7 @@ case $OS in
 		
   	;;
 	OpenBSD)
-  	VERS=6.8
+  	VERS=6.9
 		case $ARCH in
 			i386|sparc64|amd64)
 				# Supported for OpenBSD
@@ -199,7 +213,7 @@ case $OS in
 			esac
 			;;
 		Debian)
-		VERS=10.7.0
+		VERS=10.8.0
 		
 			case $ARCH in
 				amd64)
@@ -234,18 +248,31 @@ case $OS in
 	;;
 	
 	Solaris)
-		
+	
+	# 10/x86 works and is our default
+	# 10/sparc/64 doesn't
 	ARCH1=x86
 	if [ "$ARCH" = "sparc64" ]; then 
 		ARCH1=sparc # This isn't used but is here for completeness
 	fi
-	ISO="sol-$VERS-u11-ga-$ARCH1-dvd.iso"
+	# 7,8,9 let the user do the work unfortunately
+	ISO="Solaris$VERS-$ARCH.iso" 
+
+	[ "$VERS" = "10" ] && ISO="sol-$VERS-u11-ga-$ARCH1-dvd.iso"
+	# 11 won't boot properly but it won't boot on virtual box either
 	[ "$VERS" = "11" ] && ISO="sol-11_4-text-$ARCH1.iso"
 	URL="" #Not used for Solaris
 	;;
 	NetBSD)
 		ISO=$OS-$VERS-$ARCH.iso
 		URL="$NETBSDCDN/NetBSD-$VERS/images/$ISO"
+		
+		A=`echo $VERS | awk -F. '{print $1}'`
+    if [ "$A" -lt 7 ]; then 
+		  # Use the archives
+			NETBSDCDN="$NETBSDARCHIVE"
+		fi
+		
 		;;
 	OpenBSD)
 		DOTLESS=`echo $VERS | sed -e 's/\.//g'`
@@ -288,24 +315,12 @@ if [ "$?" != "0" ]; then
 	exit 1
 fi
 
-# OS dependencies on ISO download - Solaris at the mo
-#
-case $OS in
-	Solaris)
-		if [ ! -f "$ISO" ]; then
-			echo "### Please download the ISO: $ISO from Oracle">&2
-			echo "### You will need a login">&2
-			echo "### Place them in $FINALTARGET">&2
-			exit 1
-		fi
-		;;
-	esac
 
 	if [ -f "$IMAGE" ]; then
 		echo "Using existing hard disc $IMAGE">&2
 	else
 		echo "Creating $IMAGE of size $SIZE">&2
-		qemu-img create -f raw "$IMAGE" $SIZE
+		qemu-img create -f $IMGFORMAT "$IMAGE" $SIZE
 		echo "(Using Setup mode)">&2
 		SETUP="1"
 	fi
@@ -314,11 +329,24 @@ case $OS in
 		BOOT="-boot d"
 	fi
 
+if [ "$ZAPISO" = "1" ]; then
+	echo "Removing ISO as requested">&2
+	rm -f "$ISO"
+fi
+
 if [ -f "$ISO" ]; then
   echo "Installation $ISO file present">&2
 else
 	
 	if [ "$SETUP" = "1" ] || [ "$NEEDISO" = 1 ]; then
+		# OS dependencies on ISO download - Solaris at the mo
+		if [ "$OS" = "Solaris" ]; then
+			echo "### Please download the ISO: $ISO from Oracle">&2
+			echo "### You will need a login">&2
+			echo "### Older versions may be at archive.org">&2
+			echo "### Place them in $FINALTARGET">&2
+			exit 1
+		fi
 	
 	  INTERMEDIATE="$ISO"
 		if [ "$BUNZIPISO" = "1" ]; then
@@ -337,10 +365,16 @@ else
 fi
 
 INSTALLFLAGS=""
+NETUSER="-net user"
+NETNIC="-net nic"
+
+if [ "$SSHPORT" != "" ]; then
+	NETUSER="$NETUSER,hostfwd=tcp::${SSHPORT}-:22"
+fi
 
 case $ARCH in
 	i386|amd64)
-	QEMUFLAGS="-m $MEMORY -hda $IMAGE -net user -net nic"
+	QEMUFLAGS="-m $MEMORY -hda $IMAGE"
 	[ "$SETUP" = "1" ] && INSTALLFLAGS="-cdrom $ISO"
   ;;
   macppc|powerpc)
@@ -352,11 +386,11 @@ case $ARCH in
 	INSTALLFLAGS="-cdrom $ISO" # CD is needed for regular running...
   ;;
 	sparc64)
-	QEMUFLAGS="-drive file=$IMAGE,if=ide,bus=0,unit=0 -net user -net nic"
+	QEMUFLAGS="-drive file=$IMAGE,if=ide,bus=0,unit=0"
 	[ "$SETUP" = "1" ] && INSTALLFLAGS="-drive file=$ISO,format=raw,if=ide,bus=1,unit=0,media=cdrom,readonly=on"
 	;;
 	sparc)
-	QEMUFLAGS="-drive file=$IMAGE,if=scsi,bus=0,unit=0,media=disk -net user -net nic"
+	QEMUFLAGS="$OFWBOOT -drive file=$IMAGE,if=scsi,bus=0,unit=0,media=disk"
 	[ "$SETUP" = "1" ] && INSTALLFLAGS="-drive file=$ISO,format=raw,if=scsi,bus=0,unit=2,media=cdrom,readonly=on"
   ;;
 	*)
@@ -365,11 +399,16 @@ case $ARCH in
 	;;
 esac
 
+[ "$ONLYGETISO" = "1" ] && echo "Exiting - only getting iso" && exit 0
+
+COMMAND="qemu-system-$EMU $EXTRAFLAGS $CURSES $INSTALLFLAGS $NETUSER $NETNIC $BOOT $QEMUFLAGS"
+
 echo "#!/bin/sh" >boot.sh
 echo "# This is an experiment" >>boot.sh
-echo "qemu-system-$EMU $EXTRAFLAGS $CURSES $QEMUFLAGS -boot c" >>boot.sh
+echo "# Last boot was with:" >>boot.sh
+echo "$COMMAND" >> boot.sh
 
 echo "Starting emulator"
-echo "qemu-system-$EMU $EXTRAFLAGS $CURSES $QEMUFLAGS $INSTALLFLAGS $BOOT"
+echo "$COMMAND"
 sleep 2
-qemu-system-$EMU $EXTRAFLAGS $CURSES $QEMUFLAGS $INSTALLFLAGS $BOOT
+$COMMAND

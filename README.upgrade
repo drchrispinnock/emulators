@@ -1,0 +1,30 @@
+
+Upgrading a VM is relatively straightforward using these scripts
+provided the installer ISO has an upgrade path. Here is what we
+did to upgrade OpenBSD/i386 6.8 to 6.9:
+
+# Made sure that the VM for 6.8 was shutdown gracefully
+
+# Go to the VM directory
+cd ~/VM/Qemu/OpenBSD/i386
+
+# Make a directory for 6.9 
+mkdir -p 6.9
+
+# Copy the disc image for 6.8 there
+cp 6.8/openbsd-disk-i386.img 6.9
+
+# If the install69 iso is released, you don't need to download it manually.
+# Our script will get it. In this case, we were using a beta release
+# of 6.9 - the iso was in a different location.
+# So we downloaded the installation iso and moved it to 6.9
+cp ~/Downloads/install69.iso 6.9
+
+# Boot a Qemu from the CD:
+sh ~/PATHTO/emulators/use-qemu-vm.sh -i OpenBSD i386 6.9
+
+# Follow the upgrade process, halt the VM then boot with:
+sh ~/PATHTO/emulators/use-qemu-vm.sh OpenBSD i386 6.9
+
+# Once you are happy with the VM you can remove the 6.8 version
+

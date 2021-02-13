@@ -1,0 +1,76 @@
+
+* 9 - Find and download the Solaris 9 Software CD/DVD
+
+* 8 - Find and download the Solaris CD (1 of 2)
+* Use use-qemu-vm.sh -i Solaris sparc 8
+
+* 7 - Find and download the Solaris 7 Software D
+* Use use-qemu-vm.sh -i Solaris sparc 7
+
+* When the installer exits, run format and relive the experience of 
+a sysadmin from the 90s. Choose 0 for the disc, then 18 - Other
+Use these values:
+
+They are sort of correct for an 8G disc:
+
+Enter number of data cylinders: 17700
+Enter number of alternate cylinders[2]: 
+Enter number of physical cylinders[17702]: 
+Enter number of heads: 15
+Enter physical number of heads[default]: 
+Enter number of data sectors/track: 63
+Enter number of physical sectors/track[default]: 
+Enter rpm of drive[3600]: 
+Enter format time[default]: 
+Enter cylinder skew[default]: 
+Enter track skew[default]: 
+Enter tracks per zone[default]: 
+Enter alternate tracks[default]: 
+Enter alternate sectors[default]: 
+Enter cache control[default]: 
+Enter prefetch threshold[default]: 
+Enter minimum prefetch[default]: 
+Enter maximum prefetch[default]: 
+Enter disk type name (remember quotes): Q
+
+Run label twice. The first time you might get an error.
+
+
+run suninstall. Install Core Solaris.
+
+* Use Manual Reboot when asked
+
+At the very end, do not reboot - use installboot as follows:
+
+
+
+cd /usr/platform/sun4m/lib/fs/ufs
+# installboot boot* /dev/rdsk/c0t0d0s0
+
+This should not be necessary. But...
+
+* When it has installed, CTRL-A x into the reboot and use
+use-qemu-vm.sh without the -i
+
+It booted for me anyway:
+SunOS Release 5.8 Version Generic_108528-22 32-bit
+Copyright 1983-2003 Sun Microsystems, Inc.  All rights reserved.
+Hostname: foo
+Configuring /dev and /devices
+The system is coming up.  Please wait.
+in.rdisc: No interfaces up
+Starting IPv4 routing daemon.
+starting rpc services: rpcbind done.
+Setting default IPv4 interface for multicast: add net 224.0/4: gateway foo
+syslog service starting.
+Feb  7 12:05:37 foo sendmail[207]: My unqualified host name (localhost) unknown; sleeping for retry
+The system is ready.
+
+foo console login:
+
+
+**** If you happen to have an image from another Solaris VM
+**** you can save yourself the disklabel ache by copying it to the VM
+**** directory for a new VM and installing over it.
+
+

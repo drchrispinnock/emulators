@@ -1,6 +1,6 @@
 #!/bin/sh
 
-TARGET=$HOME/Qemu/NetBSD/arm64
+TARGET=$HOME/VM/Qemu/NetBSD/arm64
 SIZE=10g
 
 NETBSD="http://nycdn.netbsd.org/pub/NetBSD-daily/netbsd-9/latest/evbarm-aarch64/binary/gzimg/arm64.img.gz"

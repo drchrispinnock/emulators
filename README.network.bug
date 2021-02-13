@@ -1,0 +1,100 @@
+
+I have an issue using Qemu on Mac OS X - both Catalina and Big Sur.
+The issue occurs in both 5.2 and 4.2* branches of Qemu. Here is a rough 
+explanation of what is happening. Adam Chappell figured most of this out 
+(because a. he is cleverer than me (at some things), b. he didn't sell
+his copy of Stevens UNIX Network Programming like I did in the 00s).
+
+Symptom: 
+--------
+Applications such as ftp that read large amounts of data from the network 
+may ignore valid data due to the Urgent flag being set on packets in the 
+stream.
+
+- Install a Unix VM (e.g. NetBSD, OpenBSD, etc) on Qemu using Mac OS X.
+- Try to FTP a large file, such as 
+		ftp://ftp.isc.org/isc/bind9/9.16.11/bind-9.16.11.tar.xz
+  and you will be one byte short (not just this file, it's just an ex).
+
+Synopsis: 
+---------
+- On inspection, the urgent flag is being set on the last packet of data
+- As a result data is missing and is not received by the client app
+  because it is considered out of band.
+- poll() on Mac OS X has different behaviour to other Unices.
+- towards the end of a stream, PRI and HUP are sent (whereas on FreeBSD
+  and others it is not)
+- as a result of PRI, the slirp library used in Qemu for the user 
+  network interface adds an urgent bit to the relevant  packets
+
+To see the different behaviour, we setup a server to serve a large file
+and wrote a client to receive it, using poll() and dumping information about the flags.
+
+Here is FreeBSD - the IN flag is set throughout.
+
+ec2-user@freebsd:~/polltest $ ./a.out -w -P lXXX.net
+Resolving lXXX.net: trying XXX.XXX.XXX.XXX... OK
+FD 3 ready: POLLIN
+Read 1024 byte(s)
+FD 3 ready: POLLIN
+Read 1024 total byte(s)
+[snipped]
+
+FD 3 ready: POLLIN
+Read 102400 total byte(s)
+ec2-user@freebsd:~/polltest $
+
+Here is Mac OS X (Big Sur). You can see at the end of the stream,
+both PRI & HUP are set.
+
+Resolving lXXX.net: trying XXX.XXX.XXX.XXX .. OK
+FD 5 ready: POLLIN 
+Read 1024 byte(s)
+[Snipped]
+
+FD 5 ready: POLLIN 
+Read 416 byte(s)
+FD 5 ready: POLLIN POLLPRI POLLHUP 
+Hangup on FD 5
+Read 160 byte(s)
+FD 5 ready: POLLIN POLLPRI POLLHUP 
+Hangup on FD 5
+Read 102400 total byte(s)
+
+Towards a fix:
+--------------
+The following patch removes the symptom simply by ignoring these flags.
+This is not necessarily the final answer, but we have run with this patch
+for a couple of days and haven't seen any negative behaviour.
+
+diff -ru qemu-5.2.0/slirp/src/slirp.c qemu-5.2.0-wrk/slirp/src/slirp.c
+--- qemu-5.2.0/slirp/src/slirp.c	2021-02-10 11:02:07.000000000 +0000
++++ qemu-5.2.0-wrk/slirp/src/slirp.c	2021-02-10 13:07:17.000000000 +0000
+@@ -23,7 +23,7 @@
+  * THE SOFTWARE.
+  */
+ #include "slirp.h"
+-
++#define IGNOREPOLLPRI
+ 
+ #ifndef _WIN32
+ #include <net/if.h>
+@@ -621,6 +621,8 @@
+              * This will soread as well, so no need to
+              * test for SLIRP_POLL_IN below if this succeeds
+              */
++
++#ifndef IGNOREPOLLPRI
+             if (revents & SLIRP_POLL_PRI) {
+                ret = sorecvoob(so);
+                if (ret < 0) {
+@@ -633,6 +635,9 @@
+              * Check sockets for reading
+              */
+             else if (revents & 
++#else
++            if (revents & 
++#endif
+                      (SLIRP_POLL_IN | SLIRP_POLL_HUP | SLIRP_POLL_ERR)) {
+                 /*
+                  * Check for incoming connections
