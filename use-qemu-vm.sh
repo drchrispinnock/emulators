@@ -5,7 +5,7 @@
 # Chris Pinnock Feb/2021 - No Warranty - Use at your own risk!
 #
 # Supported architectures
-# NetBSD - amd64, i386, sparc, sparc64, macppc
+# NetBSD - amd64, i386, sparc, sparc64, macppc, hppa
 # OpenBSD - amd64, i386, sparc64
 # FreeBSD - i386, amd64, sparc64
 # Debian - amd64
@@ -181,7 +181,7 @@ case $OS in
 	OpenBSD)
   	VERS=6.9
 		case $ARCH in
-			i386|sparc64|amd64)
+			i386|sparc64|amd64|hppa)
 				# Supported for OpenBSD
 				;;
 			*)
@@ -264,8 +264,8 @@ case $OS in
 		URL="$NETBSDCDN/NetBSD-$VERS/images/$ISO"
 		
 		A=`echo $VERS | awk -F. '{print $1}'`
-    if [ "$A" -lt 7 ]; then 
-		  # Use the archives
+    		if [ "$A" -lt 7 ]; then 
+			# Use the archives
 			NETBSDCDN="$NETBSDARCHIVE"
 		fi
 		
