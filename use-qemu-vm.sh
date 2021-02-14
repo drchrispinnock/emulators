@@ -5,7 +5,7 @@
 # Chris Pinnock Feb/2021 - No Warranty - Use at your own risk!
 #
 # Supported architectures
-# NetBSD - amd64, i386, sparc, sparc64, macppc
+# NetBSD - amd64, i386, sparc, sparc64, macppc, hppa
 # OpenBSD - amd64, i386, sparc64
 # FreeBSD - i386, amd64, sparc64
 # Debian - amd64
@@ -37,7 +37,6 @@ DEBUG=0
 OS=NetBSD
 ARCH=amd64
 SIZE=8G
-MEMORY=256M
 EXTRAFLAGS=""
 SETUP="0"
 IMGFORMAT="qcow2"
@@ -161,13 +160,9 @@ case $OS in
 	NetBSD)
 		VERS=9.1
 		case $ARCH in
-			i386)
-				# Supported for NetBSD
-				;;
-				sparc64|sparc)
-#				EXTRAFLAGS="-nographic" # XXX not sure this is needed
-				;;
-			amd64)
+			i386|sparc64|sparc|amd64|hppa)
+				# Supported - no tuning needed
+				
 				;;
 			alpha)
 				;;
@@ -195,6 +190,10 @@ case $OS in
 			alpha)
 				# Try
 				VERS=6.8
+			hppa)
+				echo "# XXXX"
+				echo "# XXXX Warning - OpenBSD/hppa installs but does not seem to boot normally"
+				echo "# XXXX"
 				;;
 			*)
 				echo "$OS/$ARCH not supported">&2
@@ -276,8 +275,8 @@ case $OS in
 		URL="$NETBSDCDN/NetBSD-$VERS/images/$ISO"
 		
 		A=`echo $VERS | awk -F. '{print $1}'`
-    if [ "$A" -lt 7 ]; then 
-		  # Use the archives
+    		if [ "$A" -lt 7 ]; then 
+			# Use the archives
 			NETBSDCDN="$NETBSDARCHIVE"
 		fi
 		
@@ -302,7 +301,9 @@ case $OS in
 esac
 
 [ "$CLISIZE" != "" ] && SIZE=$CLISIZE
+
 [ "$CLIMEM" != "" ] && MEMORY=$CLIMEM
+[ "$MEMORY" != "" ] && MEMORY="-m $MEMORY"
 
 FINALTARGET="$TARGET/$ARCH/$VERS"
 if [ "$DEBUG" = "1" ]; then
@@ -386,10 +387,10 @@ fi
 
 
 case $ARCH in
-	i386|amd64)
+	i386|amd64|hppa)
 	QEMUFLAGS="-hda $IMAGE"
 	[ "$SETUP" = "1" ] && INSTALLFLAGS="-cdrom $ISO"
-  ;;
+	;;
   macppc|powerpc)
 	# I need the ISO to boot from after installation
 	#
@@ -419,12 +420,17 @@ esac
 
 [ "$ONLYGETISO" = "1" ] && echo "Exiting - only getting iso" && exit 0
 
-COMMAND="qemu-system-$EMU -m $MEMORY $EXTRAFLAGS $CURSES $INSTALLFLAGS $NETUSER $NETNIC $BOOT $QEMUFLAGS"
+COMMAND="qemu-system-$EMU $EXTRAFLAGS $MEMORY $CURSES $INSTALLFLAGS $NETUSER $NETNIC $BOOT $QEMUFLAGS"
 
-echo "#!/bin/sh" >boot.sh
-echo "# This is an experiment" >>boot.sh
-echo "# Last boot was with:" >>boot.sh
-echo "$COMMAND" >> boot.sh
+SCRIPT="boot.sh"
+[ "$SETUP" = "1" ] && SCRIPT="install.sh"
+
+echo "#!/bin/sh" >lastboot.sh
+echo "# This is an experiment" >>lastboot.sh
+echo "# Last boot was with:" >>lastboot.sh
+echo "$COMMAND" >> lastboot.sh
+
+cp lastboot.sh $SCRIPT
 
 echo "Starting emulator"
 echo "$COMMAND"

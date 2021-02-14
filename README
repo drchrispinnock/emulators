@@ -11,26 +11,29 @@ mop up and keep all the pieces.
 i386    qemu    qemu    qemu    qemu
 amd64   qemu    qemu    qemu    +++     qemu   qmu^^
 sparc64	qemu    qemu++  qemu**
-sparc   qemu                    qemu^
+sparc   qemu			+++
 macppc  qemu***
 arm64   qemu* 
+hppa	qemu	(qemu^^^)
 
 pmax    gxemul
-cats	  gxemul+
+cats	gxemul+
 
 vax	simh
 
-* see section 2
-** has trouble booting with graphics (we use -nographic by default)
+*   see section 2
+**  has trouble booting with graphics (we use -nographic by default)
 *** NetBSD 9.1 doesn't boot, we use 9.0
-+ gxemul says it works for NetBSD 4.0.1. I can't get 5* onwards to
-extract base.tgz. Kernel panic
-++ regular boot asks for the root device - just use wd0a
++   gxemul says it works for NetBSD 4.0.1. I can't get 5* onwards to
+    extract base.tgz. Kernel panic
+++  regular boot asks for the root device - just use wd0a
 +++ Solaris 10 for i386. I cannot get the 11 installation iso to boot 
-on amd64, but the VM images may work.
-^ Solaris 7, 8 & 9 sparc will work but you need to sort drive geometries
-  See doc/Solaris-sparc-789.txt
-^^ others may work - I haven't tried
+    on amd64, but the VM images may work.
+^   Solaris 7, 8 & 9 sparc will work but you need to sort drive geometries
+    See doc/Solaris-sparc-789.txt
+^^  Others may work - I haven't tried
+^^^ OpenBSD/hppa asks for boot device on normal boot and gets stuck
+    on pf. Boot single user and disable it in /etc/rc.conf.local
 
 ------------------------------------------------------------------------
 1. Qemu
@@ -100,6 +103,8 @@ Quirks:
   guest OS gets short reads on FTP and is missing a byte. I've written
   this up on my blog page.
 * For Solaris, you will need to get the ISO images for x86 from Oracle
+* Solaris 8 is availabe from archive.org:
+https://archive.org/download/solaris8_703sparc/Solaris%208%20Installation%20HW%207-03%20SPARC%20%28705-0540-10%29%28Sun%20Microsystems%2C%20Inc.%29%28July%202003%29.iso
 * NetBSD/macppc is slightly more involved:
       When booting normally, I setup the boot to fail to drop to
       the boot prompt. To boot type:
