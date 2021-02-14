@@ -1,4 +1,8 @@
 
+You may be able to find the Solaris Software on archive.org
+If you need tools (e.g. compilers) try:
+https://jupiterrise.com/tgcware/tgcware.solaris.html
+
 * 9 - Find and download the Solaris 9 Software CD/DVD
 
 * 8 - Find and download the Solaris CD (1 of 2)
@@ -6,6 +10,16 @@
 
 * 7 - Find and download the Solaris 7 Software D
 * Use use-qemu-vm.sh -i Solaris sparc 7
+
+* 2.6 - Find and download the Solaris 2.6 Installation disc
+* Use use-qemu-vm.sh -i Solaris sparc 2.6
+
+You use the mini image in the images directory. Copy this to
+solaris-disk-sparc.img in the VM directory. This image will resize
+up to 8G and has a Sun disk label on it.
+
+If you don't want to use this, follow the instructions below
+to use format to setup the label
 
 * When the installer exits, run format and relive the experience of 
 a sysadmin from the 90s. Choose 0 for the disc, then 18 - Other

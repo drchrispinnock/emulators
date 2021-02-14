@@ -30,7 +30,7 @@ vax	simh
 +++ Solaris 10 for i386. I cannot get the 11 installation iso to boot 
     on amd64, but the VM images may work.
 ^   Solaris 7, 8 & 9 sparc will work but you need to sort drive geometries
-    See doc/Solaris-sparc-789.txt
+    See doc/Solaris-sparc-789.txt or use the ready 8G image in images/
 ^^  Others may work - I haven't tried
 ^^^ OpenBSD/hppa asks for boot device on normal boot and gets stuck
     on pf. Boot single user and disable it in /etc/rc.conf.local

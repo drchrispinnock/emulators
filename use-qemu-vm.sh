@@ -135,9 +135,9 @@ case $OS in
 	;;
 	
 	Solaris)
-		MEMORY=1G 		# Memory hungry
 		case $ARCH in
 			i386)
+			MEMORY=1G 		# Memory hungry
 			VERS=10
 			;;
 			amd64)
