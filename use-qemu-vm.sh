@@ -10,6 +10,7 @@
 # FreeBSD - i386, amd64, sparc64
 # Debian - amd64
 # Solaris 10 - i386
+# Solaris 7, 8, 9 - sparc
 # Plan9 - amd64
 
 # Usage: $0 [[[[[OS] Arch] NOGUI] Size]
@@ -168,6 +169,8 @@ case $OS in
 #				EXTRAFLAGS="-nographic" # XXX not sure this is needed
 				;;
 			amd64)
+				;;
+			alpha)
 				;;
 			macppc)
 				VERS=9.0	# 9.1 doesn't boot
