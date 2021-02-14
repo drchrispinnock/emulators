@@ -276,6 +276,10 @@ case $OS in
 		URL="$NETBSDCDN/NetBSD-$VERS/images/$ISO"
 		
 		A=`echo $VERS | awk -F. '{print $1}'`
+
+		if [ "$A" = "7" ]; then
+			URL="$NETBSDCDN/NetBSD-$VERS/$ARCH/installation/cdrom/boot.iso"
+		fi
     		if [ "$A" -lt 7 ]; then 
 			# Use the archives
 			NETBSDCDN="$NETBSDARCHIVE"
