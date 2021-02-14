@@ -10,7 +10,7 @@
 # FreeBSD - i386, amd64, sparc64
 # Debian - amd64
 # Solaris 10 - i386
-# Solaris 7, 8, 9 - sparc
+# Solaris 2.6, 7, 8, 9 - sparc
 # Plan9 - amd64
 
 # Usage: $0 [[[[[OS] Arch] NOGUI] Size]
@@ -135,8 +135,7 @@ case $OS in
 		esac
 	;;
 	
-	Solaris|Slowaris)
-	  OS=Solaris # Sorry everyone. I did enjoy using it for work years ago :-)
+	Solaris)
 		MEMORY=1G 		# Memory hungry
 		case $ARCH in
 			i386)
@@ -148,7 +147,7 @@ case $OS in
 			VERS=11 # Still has trouble on discs
 			;;
 			sparc)
-			VERS=8 # 10 doesn't work on Qemu; 9 might
+			VERS=9 # 10/sparc doesn't work on Qemu
 			EXTRAFLAGS="-M SS-20"
 			CURSES="-nographic"
 			#OFWBOOT="-prom-env auto-boot?=false"
@@ -266,7 +265,7 @@ case $OS in
 	fi
 	# 7,8,9 let the user do the work unfortunately
 	ISO="Solaris$VERS-$ARCH.iso" 
-
+	[ "$VERS" = "2.6" ] && MEMORY=256M
 	[ "$VERS" = "10" ] && ISO="sol-$VERS-u11-ga-$ARCH1-dvd.iso"
 	# 11 won't boot properly but it won't boot on virtual box either
 	[ "$VERS" = "11" ] && ISO="sol-11_4-text-$ARCH1.iso"
