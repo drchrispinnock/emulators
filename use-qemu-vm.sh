@@ -190,6 +190,7 @@ case $OS in
 			alpha)
 				# Try
 				VERS=6.8
+				;;
 			hppa)
 				echo "# XXXX"
 				echo "# XXXX Warning - OpenBSD/hppa installs but does not seem to boot normally"
