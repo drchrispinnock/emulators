@@ -74,6 +74,10 @@ use-qemu-vm.sh [-i] [-c] [-n] [-d] [-t TargetDir] [OS [arch [ver]]]
      useful graphics library. -c seems to work better with i386 &
      amd64. -n is better for the other platforms.
 
+   * For FreeBSD, if you don't want RELEASE (e.g. you want BETA2)
+     use -R. e.g.
+     sh use-qemu-vm.sh -i -R BETA2 FreeBSD amd64 13.0
+
    * The script deposits a script called boot.sh in the VM directory
    which contains the command last used to boot the VM. So if you 
    are happy with the last run, you can use this script going forward.

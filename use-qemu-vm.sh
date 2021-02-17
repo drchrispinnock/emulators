@@ -17,7 +17,8 @@
 # e.g.
 # $0 [-i] OpenBSD i386 - run the installer
 # $0 OpenBSD i386 - run the VM or the installer if it isn't setup
-USAGE="$0 [-6] [-X] [-F] [-i] [-c] [-n] [-d] [-P port] [-t TargetDir] [-m memory] [-s hd size] [OS [arch [ver]]]\n  -i run installer ISO\n  -c use -display curses\n  -n use -nographic (overrides -c)\n  -d more output\n  use -P to setup a local SSH port\n  use -t to specify an alternative target directory for files\n  use -X to clean up the ISO file and start again\n  use -F to just fetch the ISO\n  -6 specify ipv6=no (some VMs have trouble connecting)\n\n  OS can be NetBSD, OpenBSD, FreeBSD, Plan9, Debian or Solaris\n"
+USAGE="$0 [-6] [-X] [-F] [-i] [-c] [-n] [-d] [-P port] [-R FreeBSDRel] 
+[-t TargetDir] [-m memory] [-s hd size] [OS [arch [ver]]]\n  -i run installer ISO\n  -c use -display curses\n  -n use -nographic (overrides -c)\n  -d more output\n  use -P to setup a local SSH port\n  use -t to specify an alternative target directory for files\n  use -X to clean up the ISO file and start again\n  use -F to just fetch the ISO\n  -6 specify ipv6=no (some VMs have trouble connecting)\n\n  OS can be NetBSD, OpenBSD, FreeBSD, Plan9, Debian or Solaris\n"
 
 # Set the environment variable QEMUTARGET if you want an
 # alternative to $HOME/VM/Qemu
@@ -40,6 +41,8 @@ SIZE=8G
 EXTRAFLAGS=""
 SETUP="0"
 IMGFORMAT="qcow2"
+
+FREEBSDREL="RELEASE"
 
 NEEDISO="" 	# Need ISO for regular operation
 ZAPISO="" 	# start again with the ISO
@@ -73,6 +76,7 @@ while [ $# -gt 0 ]; do
 	-F)			  ONLYGETISO="1"; NEEDISO="1" ;;
 	-m)			  CLIMEM="$2"; shift; ;;
 	-P)			  SSHPORT="$2"; shift; ;;
+	-R)			  FREEBSDREL="$2"; shift;  ;;
 	-s)       CLISIZE="$2"; shift; ;;
 	-h|--help)		
 				echo "$USAGE"; exit ;;
@@ -321,7 +325,7 @@ case $OS in
 		URL="$OPENBSDCDN/$VERS/$ARCH/$ISO"
 		;;
 	FreeBSD)
-		ISO="FreeBSD-$VERS-RELEASE-$ARCH-disc1.iso"
+		ISO="FreeBSD-$VERS-$FREEBSDREL-$ARCH-disc1.iso"
 		URL="$FREEBSDCDN/$ARCH/$ARCH/ISO-IMAGES/$VERS/$ISO"
 		;;
 	Debian)
