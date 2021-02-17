@@ -1,0 +1,169 @@
+
+To: port-alpha at NetBSD.org
+
+Hi all,
+
+Apologies if this has been covered before, but this afternoon I’ve successfully booted NetBSD/alpha 9.1 on AXPbox (an emulator forked from es40).
+https://github.com/lenticularis39/axpbox/wiki
+
+NetBSD is listed as a Guest but lists SCSI as an issue and suggests IDE - I couldn’t get IDE to work and used SCSI. I’ve got further than is documented.
+https://github.com/lenticularis39/axpbox/wiki/Guest-support
+
+I used this as a guide:
+https://github.com/lenticularis39/axpbox/wiki/OpenVMS-installation-guide
+
+I was able to get through the minimal installation. The config at the end of this e-mail worked for me (es40.cfg). You will need the rom file (see the OpenVMS installation guide).
+
+Booting from the CD looks like this:
+P00>>>show device
+dka0.0.0.1.0               DKA0                           RZ58  2000
+dka100.1.0.1.0             DKA100                        RRD42  4.5d
+dva0.0.0.1000.0            DVA0
+pka0.7.0.1.0               PKA0                  SCSI Bus ID 7
+P00>>>boot dka100
+
+On booting after installation, the emulator has boot flags set to 0 and they need to be set to a for NetBSD to come up multi user (it comes up in single user otherwise).
+P00>>>set boot_osflags a
+P00>>>boot dka0
+
+Next I need to go and figure out if there are any network options, but it is booting at least with minimal effort.
+Chris
+
+
+Copyright (c) 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005,
+    2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017,
+    2018, 2019, 2020 The NetBSD Foundation, Inc.  All rights reserved.
+Copyright (c) 1982, 1986, 1989, 1991, 1993
+    The Regents of the University of California.  All rights reserved.
+
+NetBSD 9.1 (GENERIC) #0: Sun Oct 18 19:24:30 UTC 2020
+        xxx@xxx.xxx.xxx:/usr/src/sys/arch/alpha/compile/GENERIC
+AlphaServer ES40, 800MHz, s/n
+8192 byte page size, 1 processor.
+total memory = 256 MB
+(2736 KB reserved for PROM, 253 MB used by NetBSD)
+avail memory = 237 MB
+timecounter: Timecounters tick every 0.976 msec
+Kernelized RAIDframe activated
+running cgd selftest aes-xts-256 aes-xts-512 done
+mainbus0 (root)
+cpu0 at mainbus0: ID 0 (primary), 21264C-6
+cpu0: Architecture extensions: 0x1305<PAT,MVI,CIX,BWX>
+tsc0 at mainbus0: 21272 Core Logic Chipset, Cchip rev 0
+tsc0: 8 Dchips, 2 memory buses of 16 bytes
+tsc0: arrays present: 256MB, 0MB, 0MB, 0MB, Dchip 0 rev 1
+tsp0 at tsc0
+pci0 at tsp0 bus 0
+pci0: i/o space, memory space enabled, rd/line, rd/mult, wr/inv ok
+siop0 at pci0 dev 1 function 0: Symbios Logic 53c810 (fast scsi)
+siop0: interrupting at dec 6600 irq 8
+scsibus0 at siop0: 8 targets, 8 luns per target
+sio0 at pci0 dev 7 function 0: Acer Labs M1533 PCI-ISA Bridge (rev. 0xc3)
+aceride0 at pci0 dev 15 function 0: Acer Labs M5229 UDMA IDE Controller (rev. 0xc1)
+aceride0: bus-master DMA support present
+aceride0: using PIO transfers above 137GB as workaround for 48bit DMA access bug, expect reduced performance
+aceride0: primary channel configured to compatibility mode
+aceride0: primary channel interrupting at isa irq 14
+atabus0 at aceride0 channel 0
+aceride0: secondary channel configured to compatibility mode
+aceride0: secondary channel interrupting at isa irq 15
+atabus1 at aceride0 channel 1
+ohci0 at pci0 dev 19 function 0: Acer Labs M5237 USB 1.1 Host Controller (rev. 0x03)
+ohci0: interrupting at isa irq 10
+ohci0: OHCI version 1.0, legacy support
+ohci0: autoconfiguration error: reset timeout
+ohci0: autoconfiguration error: init failed, error=5
+isa0 at sio0
+lpt0 at isa0 port 0x3bc-0x3bf irq 7
+com0 at isa0 port 0x3f8-0x3ff irq 4: ns8250 or ns16450, no fifo
+com0: console
+pckbc0 at isa0 port 0x60-0x64
+pckbd0 at pckbc0 (kbd slot)
+pckbc0: using irq 1 for kbd slot
+wskbd0 at pckbd0 mux 1
+pms0 at pckbc0 (aux slot)
+pckbc0: using irq 12 for aux slot
+wsmouse0 at pms0 mux 0
+attimer0 at isa0 port 0x40-0x43
+pcppi0 at isa0 port 0x61
+spkr0 at pcppi0: PC Speaker
+wsbell at spkr0 not configured
+midi0 at pcppi0: PC speaker
+isabeep0 at pcppi0
+mcclock0 at isa0 port 0x70-0x71: mc146818 compatible time-of-day clock
+attimer0: attached to pcppi0
+tsp1 at tsc0
+pci1 at tsp1 bus 0
+pci1: i/o space, memory space enabled, rd/line, rd/mult, wr/inv ok
+tsciic0 at tsc0
+iic0 at tsciic0: I2C bus
+timecounter: Timecounter "clockinterrupt" frequency 1024 Hz quality 0
+timecounter: Timecounter "PCC" frequency 789886336 Hz quality 1000
+scsibus0: waiting 2 seconds for devices to settle...
+sd0 at scsibus0 target 0 lun 0: <DEC, RZ58     (C) DEC, 2000> disk fixed
+sd0: 5120 MB, 16384 cyl, 16 head, 40 sec, 512 bytes/sect x 10485760 sectors
+sd0: async, 8-bit transfers
+WARNING: 2 errors while detecting hardware; check system log.
+root on sd0a dumps on sd0b
+root file system type: ffs
+kern.module.path=/stand/alpha/9.1/modules
+
+
+
+
+—— configuration
+
+sys0 = tsunami
+{
+  memory.bits = 28;
+  rom.srm = "rom/cl67srmrom.exe";
+  rom.decompressed = "rom/decompressed.rom";
+  rom.flash = "rom/flash.rom";
+  rom.dpr = "rom/dpr.rom";
+
+  cpu0 = ev68cb
+  {
+    speed = 800M;
+    icache = false;
+    skip_memtest_hack = true;
+  }
+
+  serial0 = serial
+  {
+    port = 21264;
+    action = "telnet localhost 21264";
+  }
+
+  pci0.15 = ali_ide
+  {
+
+  }
+
+  pci0.1 = sym53c810
+  {
+  disk0.0 = file
+    {
+      file = "netbsd-alpha-disk.img";
+      cdrom = false;
+      read_only = false;
+    }
+
+    disk0.1 = file
+    {
+      file = "/Users/chris/VM/Qemu/NetBSD/alpha/9.1/NetBSD-9.1-alpha.iso";
+      cdrom = true;
+      read_only = true;
+    }
+
+  }
+
+  pci0.7 = ali
+  {
+    mouse.enabled = false;
+    vga_console = false;
+  }
+
+  pci0.19 = ali_usb
+  {
+  }
+}
