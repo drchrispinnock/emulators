@@ -106,7 +106,7 @@ fi
 EMU=$ARCH
 IMAGE="$LOWEROS-disk-$ARCH.img"
 
-# Use the correct emulator for the architecture
+# Use the correct emulator and machine for the architecture
 #
 case $ARCH in
 		amd64)
@@ -115,9 +115,24 @@ case $ARCH in
 		macppc|powerpc)
 			EMU="ppc"
 			;;
+		prep)
+			EMU="ppc"
+			EXTRAFLAGS="-M 40p"
+			OFWBOOT="-prom-env auto-boot?=false" # XXX
+			;;
+		evbppc)
+			EMU="ppc"
+			EXTRAFLAGS="-M ref405ep"
+			# Needs ROM
+			;;
+		evbarm)
+			EMU="arm"
+			EXTRAFLAGS="-M integratorcp"
+			;;
 esac
 
 
+# OPERATING SYSTEMS
 # Fix depending on OS and arch
 #
 case $OS in
@@ -164,7 +179,21 @@ case $OS in
 				# Supported - no tuning needed
 				
 				;;
+			evbarm)
+				echo "### WIP, if it will work"
+				exit 1
+				;;
+			prep)
+				echo "### Previously booted WIP"
+				sleep 2 
+				;;
+			evbppc)
+				echo "### May work with Walnut rom"
+				exit 1;
+				;;
 			alpha)
+				echo "### Patches exist out to work but I can't currently boot it"
+				sleep 2 
 				;;
 			macppc)
 				VERS=9.0	# 9.1 doesn't boot
@@ -396,6 +425,21 @@ case $ARCH in
 	QEMUFLAGS="-hda $IMAGE"
 	[ "$SETUP" = "1" ] && INSTALLFLAGS="-cdrom $ISO"
 	;;
+	prep)
+	QEMUFLAGS="$OFWBOOT $IMAGE" # XXX
+	INSTALLFLAGS="-cdrom $ISO" # CD is needed for regular running...
+	  ;;
+	evbppc)
+	QEMUFLAGS="$OFWBOOT $IMAGE" # XXX
+	INSTALLFLAGS="-cdrom $ISO" # CD is needed for regular running...
+	CURSES="-nographic"
+	  ;;
+	evbarm)
+	QEMUFLAGS="$OFWBOOT $IMAGE" # XXX
+	INSTALLFLAGS="-cdrom $ISO" # CD is needed for regular running...
+	CURSES="-nographic"
+	  ;;
+
   macppc|powerpc)
 	# I need the ISO to boot from after installation
 	#
