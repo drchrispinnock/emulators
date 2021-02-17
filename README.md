@@ -88,7 +88,7 @@ CTRL-A x will exit a qemu running in nographic mode.
 The following work with this script:
 * NetBSD/amd64, i386, sparc, sparc64 (all 9.1), macppc (9.0)
 * OpenBSD/amd64, i386, sparc64 (all 6.8, 6.9-beta)
-* FreeBSD/i386, amd64, sparc64 (all 12.2)
+* FreeBSD/i386, amd64, sparc64 (all 12.2, 13.0-beta)
 * Solaris 10/i386
 * Debian/amd64 (latest)
 * Plan 9/amd64 (latest)
