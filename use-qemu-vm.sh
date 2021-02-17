@@ -402,8 +402,14 @@ else
   	echo "Downloading $ISO">&2	
 		echo "curl --location --output \"$INTERMEDIATE\" \"$URL\""
 	
-		curl --location --output $INTERMEDIATE "$URL"
-		
+		curl --fail --location --output $INTERMEDIATE "$URL"
+
+		if [ "$?" != "0" ]; then
+			echo "XXX Cannot fetch $ISO from">&2
+			echo "XXX $URL from">&2
+			exit 1
+		fi
+
 		if [ "$BUNZIPISO" = "1" ]; then
 			bunzip2 $INTERMEDIATE
 		fi
