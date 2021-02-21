@@ -6,10 +6,13 @@ These scripts were developed on Mac OS/Big Sur installed. And you should
 use at your own risk. No warranty. Anything that breaks, you get to
 mop up and keep all the pieces.
 
-        NetBSD  OpenBSD FreeBSD Solaris Debian Plan9
+MANY OTHER COMBINATIONS WORK. THE PURPOSE OF THIS SCRIPT IS TO PROVIDE
+KNOWN GOOD INSTALLATION AND BOOT PARAMETERS.
+
+        NetBSD  OpenBSD FreeBSD Solaris Debian Plan9 Minix
 -------------------------------------------------------------
+amd64   qemu    qemu    qemu    +++     qemu   qmu^^ qemu
 i386    qemu    qemu    qemu    qemu
-amd64   qemu    qemu    qemu    +++     qemu   qmu^^
 sparc64	qemu    qemu++  qemu**
 sparc   qemu			+++
 macppc  qemu***

@@ -12,6 +12,7 @@
 # Solaris 10 - i386
 # Solaris 2.6, 7, 8, 9 - sparc
 # Plan9 - amd64
+# Minix - amd64
 
 # Usage: $0 [[[[[OS] Arch] NOGUI] Size]
 # e.g.
@@ -32,6 +33,7 @@ FREEBSDCDN="https://download.freebsd.org/ftp/releases"
 DEBIANCDN="https://cdimage.debian.org/debian-cd/current/"
 SOLARISCDN="" # Needs a login, can't download automagically
 PLAN9CDN="https://plan9.io/plan9/download"
+MINIXCDN="http://download.minix3.org/iso/"
 
 # Defaults
 DEBUG=0
@@ -140,7 +142,7 @@ esac
 # Fix depending on OS and arch
 #
 case $OS in
-  Plan9)
+	Plan9)
 	  VERS=latest
 		SIZE=4G
 		case $ARCH in
@@ -152,7 +154,17 @@ case $OS in
 			;;
 		esac
 	;;
-	
+	Minix)
+		VERS=3.3.0
+		case $ARCH in
+			amd64)
+			;;
+			*)
+			echo "$OS/$ARCH not supported">&2
+			exit 1
+			;;	
+		esac
+	;;
 	Solaris)
 		case $ARCH in
 			i386)
@@ -285,6 +297,11 @@ case $OS in
 	Plan9)
 	ISO=plan9.iso
 	URL="$PLAN9CDN/$ISO.bz2"
+	BUNZIPISO="1"
+	;;
+	Minix)
+	ISO=minix_R3.3.0-588a35b.iso
+	URL="$MINIXCDN/$ISO.bz2"
 	BUNZIPISO="1"
 	;;
 	
