@@ -9,12 +9,12 @@ mop up and keep all the pieces.
 MANY OTHER COMBINATIONS WORK. THE PURPOSE OF THIS SCRIPT IS TO PROVIDE
 KNOWN GOOD INSTALLATION AND BOOT PARAMETERS.
 
-        NetBSD  OpenBSD FreeBSD Solaris Debian Plan9 Minix
--------------------------------------------------------------
-amd64   qemu    qemu    qemu    +++     qemu   qmu^^ qemu
-i386    qemu    qemu    qemu    qemu
+        NetBSD  OpenBSD FreeBSD DragonFly Solaris Debian Plan9 Minix
+------------------------------------------------------------------------
+amd64   qemu    qemu    qemu    qemu      +++     qemu   qmu^^ qemu
+i386    qemu    qemu    qemu              qemu
 sparc64	qemu    qemu++  qemu**
-sparc   qemu			+++
+sparc   qemu			          qemu^
 macppc  qemu***
 arm64   qemu* 
 hppa	qemu	(qemu^^^)
@@ -53,7 +53,7 @@ use-qemu-vm.sh [-i] [-c] [-n] [-d] [-t TargetDir] [OS [arch [ver]]]
  -d more output  
     use -t to specify an alternative target directory for files
     
-  OS can be NetBSD, OpenBSD, FreeBSD, Plan9, Debian or Solaris
+  OS as above
  
    * Sets up or boots a Qemu VM with OS and arch
    * if you specify -i, you get the setup routine and the ISO will

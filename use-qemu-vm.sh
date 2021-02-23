@@ -13,13 +13,27 @@
 # Solaris 2.6, 7, 8, 9 - sparc
 # Plan9 - amd64
 # Minix - amd64
+# Dragonfly - amd64
 
 # Usage: $0 [[[[[OS] Arch] NOGUI] Size]
 # e.g.
 # $0 [-i] OpenBSD i386 - run the installer
 # $0 OpenBSD i386 - run the VM or the installer if it isn't setup
 USAGE="$0 [-6] [-X] [-F] [-i] [-c] [-n] [-d] [-P port] [-R FreeBSDRel] 
-[-t TargetDir] [-m memory] [-s hd size] [OS [arch [ver]]]\n  -i run installer ISO\n  -c use -display curses\n  -n use -nographic (overrides -c)\n  -d more output\n  use -P to setup a local SSH port\n  use -t to specify an alternative target directory for files\n  use -X to clean up the ISO file and start again\n  use -F to just fetch the ISO\n  -6 specify ipv6=no (some VMs have trouble connecting)\n\n  OS can be NetBSD, OpenBSD, FreeBSD, Plan9, Debian or Solaris\n"
+    [-t TargetDir] [-m memory] [-s hd size] [OS [arch [ver]]]
+
+  -i run installer ISO
+  -c use -display curses
+  -n use -nographic (overrides -c)
+  -d more output
+  -P sets local SSH port
+  -t specifies an alternative target directory for files
+  -X clean up the ISO file and start again
+  -F just fetch the ISO
+  -6 specify ipv6=no (some VMs have trouble connecting)
+
+  OS can be NetBSD, OpenBSD, FreeBSD, DragonFly, Minix, Plan9,
+  Debian or Solaris."
 
 # Set the environment variable QEMUTARGET if you want an
 # alternative to $HOME/VM/Qemu
@@ -34,6 +48,7 @@ DEBIANCDN="https://cdimage.debian.org/debian-cd/current/"
 SOLARISCDN="" # Needs a login, can't download automagically
 PLAN9CDN="https://plan9.io/plan9/download"
 MINIXCDN="http://download.minix3.org/iso/"
+DFCDN="http://mirror-master.dragonflybsd.org/iso-images/"
 
 # Defaults
 DEBUG=0
@@ -188,6 +203,18 @@ case $OS in
 			;;
 		esac
   ;;
+  	Dragonfly|DragonFly|DragonFlyBSD|DragonflyBSD)
+		VERS=5.8.3
+		OS=DragonFly
+		case $ARCH in
+			amd64)
+			;;
+			*)
+			echo "$OS/ARCH not supported">&2
+			exit 1
+			;;
+		esac
+	;;
 	NetBSD)
 		VERS=9.1
 		case $ARCH in
@@ -344,6 +371,11 @@ case $OS in
 	FreeBSD)
 		ISO="FreeBSD-$VERS-$FREEBSDREL-$ARCH-disc1.iso"
 		URL="$FREEBSDCDN/$ARCH/$ARCH/ISO-IMAGES/$VERS/$ISO"
+		;;
+	DragonFly)
+		ISO="dfly-x86_64-${VERS}_REL.iso"
+		URL="$DFCDN/$ISO.bz2"
+		BUNZIPISO="1"
 		;;
 	Debian)
 		MEMORY=512M # Installer complains of low memory
