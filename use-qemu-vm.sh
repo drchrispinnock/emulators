@@ -128,6 +128,7 @@ EMU=$ARCH
 IMAGE="$LOWEROS-disk-$ARCH.img"
 
 # Use the correct emulator and machine for the architecture
+# i.e. map the OS project names to the Qemu names
 #
 case $ARCH in
 		amd64)
@@ -156,16 +157,14 @@ esac
 # OPERATING SYSTEMS
 # Fix depending on OS and arch
 #
+KNOWN=0
 case $OS in
 	Plan9)
 	  VERS=latest
 		SIZE=4G
 		case $ARCH in
 			amd64)
-			;;
-			*)
-			echo "$OS/$ARCH not supported">&2
-			exit 1
+			KNOWN=1
 			;;
 		esac
 	;;
@@ -173,33 +172,29 @@ case $OS in
 		VERS=3.3.0
 		case $ARCH in
 			amd64)
+			KNOWN=1
 			;;
-			*)
-			echo "$OS/$ARCH not supported">&2
-			exit 1
-			;;	
 		esac
 	;;
 	Solaris)
 		case $ARCH in
 			i386)
+			KNOWN=1
 			MEMORY=1G 		# Memory hungry
 			VERS=10
 			;;
 			amd64)
+			KNOWN=1
 			MEMORY=4G # Watch it struggle and dump on 1G...
 			EXTRAFLAGS="-M q35"
 			VERS=11 # Still has trouble on discs
 			;;
 			sparc)
+			KNOWN=1
 			VERS=9 # 10/sparc doesn't work on Qemu
 			EXTRAFLAGS="-M SS-20"
 			CURSES="-nographic"
 			#OFWBOOT="-prom-env auto-boot?=false"
-			;;
-			*)
-			echo "$OS/$ARCH not supported">&2
-			exit 1
 			;;
 		esac
   ;;
@@ -208,10 +203,7 @@ case $OS in
 		OS=DragonFly
 		case $ARCH in
 			amd64)
-			;;
-			*)
-			echo "$OS/ARCH not supported">&2
-			exit 1
+			KNOWN=1
 			;;
 		esac
 	;;
@@ -219,36 +211,37 @@ case $OS in
 		VERS=9.1
 		case $ARCH in
 			i386|sparc64|sparc|amd64|hppa)
+				KNOWN=1
 				# Supported - no tuning needed
 				
 				;;
 			evbarm)
+				KNOWN=1
 				echo "### WIP, if it will work"
 				exit 1
 				;;
 			prep)
+				KNOWN=1
 				echo "### Previously booted WIP"
 				sleep 2 
 				;;
 			evbppc)
+				KNOWN=1
 				echo "### May work with Walnut rom"
 				exit 1;
 				;;
 			alpha)
+				KNOWN=1
 				echo "### Patches exist out to work but I can't currently boot it"
 				sleep 2 
 				;;
 			macppc)
+				KNOWN=1
 				VERS=9.0	# 9.1 doesn't boot
 				
 				echo "### Warning: 9.1 does not work (uses 9.0 by default)">&2
 				NEEDISO=1
 				OFWBOOT="-prom-env boot-device=cd:,\\ofwboot.xcf -prom-env boot-file=notfound" # Regular boot - for setup see later
-			
-				;;
-			*)
-				echo "$OS/$ARCH not supported">&2
-				exit 1
 				;;
 		esac
 		
@@ -258,19 +251,18 @@ case $OS in
 		case $ARCH in
 			i386|sparc64|amd64)
 				# Supported for OpenBSD
+				KNOWN=1
 				;;
 			alpha)
 				# Try
 				VERS=6.8
+				KNOWN=1
 				;;
 			hppa)
+				KNOWN=1
 				echo "# XXXX"
 				echo "# XXXX Warning - OpenBSD/hppa installs but does not seem to boot normally"
 				echo "# XXXX"
-				;;
-			*)
-				echo "$OS/$ARCH not supported">&2
-				exit 1
 				;;
 		esac
 		;;
@@ -278,17 +270,15 @@ case $OS in
 	  	VERS=12.2
 			case $ARCH in
 			i386|amd64)
+				KNOWN=1
+					
 					# Supported for FreeBSD
 					;;
 				sparc64)
 				  # Has trouble without this
 					echo "Using -nographic for FreeBSD">&2
 					CURSES="-nographic";
-					;;
-					
-				*)
-					echo "$OS/$ARCH not supported">&2
-					exit 1
+					KNOWN=1
 					;;
 			esac
 			;;
@@ -298,11 +288,8 @@ case $OS in
 			case $ARCH in
 				amd64)
 					# Debian
+					KNOWN=1
 					MEMORY=1G 		# Installer grumbles about memory
-					;;
-				*)
-					echo "$OS/$ARCH not supported">&2
-					exit 1
 					;;
 			esac
 			;;
@@ -312,6 +299,11 @@ case $OS in
 		exit 1
 		;;
 esac
+			
+if [ "$KNOWN" = "0" ]; then
+	echo "$OS/$ARCH not supported">&2
+	exit 1
+fi
 
 # Fix version from the command line
 if [ -n "$3" ]; then
