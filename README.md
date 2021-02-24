@@ -11,7 +11,7 @@ KNOWN GOOD INSTALLATION AND BOOT PARAMETERS.
 
         NetBSD  OpenBSD FreeBSD DragonFly Solaris Debian Plan9 Minix
 ------------------------------------------------------------------------
-amd64   qemu    qemu    qemu    qemu      +++     qemu   qmu^^ qemu
+amd64   qemu    qemu    qemu    qemu%     +++     qemu   qmu^^ qemu
 i386    qemu    qemu    qemu              qemu
 sparc64	qemu    qemu++  qemu**
 sparc   qemu			          qemu^
@@ -37,6 +37,7 @@ vax	simh
 ^^  Others may work - I haven't tried
 ^^^ OpenBSD/hppa asks for boot device on normal boot and gets stuck
     on pf. Boot single user and disable it in /etc/rc.conf.local
+%   Installer gets stuck on both 5.8.2 and 5.8.3. Needs work.
 
 ------------------------------------------------------------------------
 1. Qemu

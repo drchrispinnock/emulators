@@ -13,7 +13,7 @@
 # Solaris 2.6, 7, 8, 9 - sparc
 # Plan9 - amd64
 # Minix - amd64
-# Dragonfly - amd64
+# Dragonfly - amd64 (installer halts at 17%)
 
 # Usage: $0 [[[[[OS] Arch] NOGUI] Size]
 # e.g.
@@ -221,7 +221,7 @@ case $OS in
 				exit 1
 				;;
 			prep)
-				KNOWN=1
+				KNOWN=2
 				echo "### Previously booted WIP"
 				sleep 2 
 				;;
@@ -231,9 +231,7 @@ case $OS in
 				exit 1;
 				;;
 			alpha)
-				KNOWN=1
-				echo "### Patches exist out to work but I can't currently boot it"
-				sleep 2 
+				KNOWN=2
 				;;
 			macppc)
 				KNOWN=1
@@ -303,6 +301,9 @@ esac
 if [ "$KNOWN" = "0" ]; then
 	echo "$OS/$ARCH not supported">&2
 	exit 1
+fi
+if [ "$KNOWN" = "2" ]; then
+	echo "$OS/$ARCH might not boot or function correctly">&2
 fi
 
 # Fix version from the command line
