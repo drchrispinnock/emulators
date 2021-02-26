@@ -447,7 +447,7 @@ else
 
 		if [ "$?" != "0" ]; then
 			echo "XXX Cannot fetch $ISO from">&2
-			echo "XXX $URL from">&2
+			echo "XXX $URL">&2
 			exit 1
 		fi
 
