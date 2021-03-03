@@ -1,4 +1,7 @@
 
+(Updated: 3/3/2021 - the folks at libslirp have patched the same area of source
+code, so I'm expecting this to be "fixed" in the next Qemu release.)
+
 
 I have an issue using Qemu on Mac OS X - both Catalina and Big Sur.
 The issue occurs in both 5.2 and 4.2* branches of Qemu. Here is a rough 
