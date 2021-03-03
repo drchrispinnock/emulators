@@ -26,7 +26,8 @@ vax	simh
 
 *   see section 2
 **  has trouble booting with graphics (we use -nographic by default)
-*** Needs approach for booting normally after installation
+*** Needs approach for booting normally after installation. NetBSD-current
+    install disc not available, but Qemu can boot 9.99.80.
 +   gxemul says it works for NetBSD 4.0.1. I can't get 5* onwards to
     extract base.tgz. Kernel panic
 ++  regular boot asks for the root device - just use wd0a
