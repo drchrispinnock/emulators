@@ -26,7 +26,7 @@ vax	simh
 
 *   see section 2
 **  has trouble booting with graphics (we use -nographic by default)
-*** NetBSD 9.1 doesn't boot, we use 9.0
+*** Needs approach for booting normally after installation
 +   gxemul says it works for NetBSD 4.0.1. I can't get 5* onwards to
     extract base.tgz. Kernel panic
 ++  regular boot asks for the root device - just use wd0a
@@ -90,7 +90,7 @@ CTRL-C will kill an qemu if it is running in a graphics window.
 CTRL-A x will exit a qemu running in nographic mode.
 
 The following work with this script:
-* NetBSD/amd64, i386, sparc, sparc64 (all 9.1), macppc (9.0)
+* NetBSD/amd64, i386, sparc, sparc64, macppc (all 9.1)
 * OpenBSD/amd64, i386, sparc64 (all 6.8, 6.9-beta)
 * FreeBSD/i386, amd64, sparc64 (all 12.2, 13.0-beta)
 * Solaris 10/i386
@@ -114,16 +114,29 @@ Quirks:
 * Solaris 8 is availabe from archive.org:
 https://archive.org/download/solaris8_703sparc/Solaris%208%20Installation%20HW%207-03%20SPARC%20%28705-0540-10%29%28Sun%20Microsystems%2C%20Inc.%29%28July%202003%29.iso
 * NetBSD/macppc is slightly more involved:
-      When booting normally, I setup the boot to fail to drop to
-      the boot prompt. To boot type:
+      When booting normally the first time after installation, I've setup the boot to fail to drop to the boot prompt. To boot type:
 
       netbsd.macppc -a
 
       The -a will instruct netbsd to ask you for the root filesystem 
-      - use wd0a. The run script needs the iso to be present on the filesystem for something valid for OpenFirmware to book. You could put a kernel and OpenFirmware boot program on an iso image and
-      use this instead. 
-
-      DHCP will not work (I think due to the lack of BPF on the interface) - you can setup a static IP. e.g. 10.0.2.100/255.255.255.0 gateway 10.0.2.2 and DNS 10.0.2.3.
+      - use wd0a. This will get you a working system, but it is the install
+      kernel. One consequence is that DHCP will not work as BPF is not in the install kernel - you can setup a static IP. e.g. 10.0.2.100/255.255.255.0 gateway 10.0.2.2 and DNS 10.0.2.3.
+      
+      The run script needs the iso to be present on the filesystem for something valid for OpenFirmware to boot. Going forward you could either 
+      
+      * build a CD ROM with a kernel built to use the hard drive image as root
+      * you could setup an HFS partition in the disc image.
+      
+      For convenience, here is an ISO image with generic kernels for 9.0 and 9.1 with wd0 hardwired. (You **can't boot** from this ISO at the moment.)
+      
+      https://cp1888.files.wordpress.com/2021/03/netbsd-boot-macppc-9.iso_.zip
+      
+      Download the ISO and use this the boot the VM without any Openboot hassle:
+      
+      cd ...where.the.vm.is...
+      qemu-system-ppc -m 1G -nographic -cdrom NetBSD-Boot-macppc-9.iso -net user,ipv6=no -net nic -boot c -prom-env boot-device=cd:,\ofwboot.xcf -prom-env boot-file=netbsd9.wd0 netbsd-disk-macppc.img
+      
+      Replace netbsd9.wd0 with netbsd91.wd0 for a 9.1 kernel.
 
 * FreeBSD/sparc64 - only boots -nographic so I've made this the default
 * Plan9/amd64 - if you follow the suggested installation, everything

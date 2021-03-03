@@ -1,4 +1,5 @@
 
+
 I have an issue using Qemu on Mac OS X - both Catalina and Big Sur.
 The issue occurs in both 5.2 and 4.2* branches of Qemu. Here is a rough 
 explanation of what is happening. Adam Chappell figured most of this out 

@@ -116,7 +116,6 @@ LOWEROS=`echo $OS | awk '{print tolower($0)}'`
 if [ "$QEMUTARGET" = "" ]; then
 	QEMUTARGET=$HOME/VM/Qemu
 fi
-TARGET=$QEMUTARGET/$OS
 
 # Determine the architecture
 #
@@ -135,7 +134,11 @@ case $ARCH in
 			EMU="x86_64"
 			;;
 		macppc|powerpc)
+			# NetBSD 9.1 PRM traps on low memory
+			# NetBSD 9.0 install kernel squeezes through :-)
+			MEMORY=1G 
 			EMU="ppc"
+      echo "HERE"
 			;;
 		prep)
 			EMU="ppc"
@@ -235,9 +238,7 @@ case $OS in
 				;;
 			macppc)
 				KNOWN=1
-				VERS=9.0	# 9.1 doesn't boot
-				
-				echo "### Warning: 9.1 does not work (uses 9.0 by default)">&2
+				VERS=9.1
 				NEEDISO=1
 				OFWBOOT="-prom-env boot-device=cd:,\\ofwboot.xcf -prom-env boot-file=notfound" # Regular boot - for setup see later
 				;;
@@ -251,11 +252,11 @@ case $OS in
 				# Supported for OpenBSD
 				KNOWN=1
 				;;
-			alpha)
-				# Try
-				VERS=6.8
-				KNOWN=1
-				;;
+#			alpha|macppc)
+#				# Try
+#				VERS=6.8
+#				KNOWN=1
+#				;;
 			hppa)
 				KNOWN=1
 				echo "# XXXX"
@@ -305,6 +306,7 @@ fi
 if [ "$KNOWN" = "2" ]; then
 	echo "$OS/$ARCH might not boot or function correctly">&2
 fi
+TARGET=$QEMUTARGET/$OS
 
 # Fix version from the command line
 if [ -n "$3" ]; then
@@ -320,7 +322,9 @@ case $OS in
 	BUNZIPISO="1"
 	;;
 	Minix)
-	ISO=minix_R3.3.0-588a35b.iso
+	# Hack
+	[ "$VERS" = "3.3.0" ] && ISO=minix_R3.3.0-588a35b.iso
+	[ "$VERS" = "3.4.0rc6" ] && ISO=minix_R3.4.0rc6-d5e4fc0.iso
 	URL="$MINIXCDN/$ISO.bz2"
 	BUNZIPISO="1"
 	;;
@@ -493,12 +497,21 @@ case $ARCH in
 	  ;;
 
   macppc|powerpc)
-	# I need the ISO to boot from after installation
-	#
-	[ "$SETUP" = "0" ] && echo "### At Boot:  type  netbsd.macppc -a">&2
-	[ "$SETUP" = "1" ] && OFWBOOT="-prom-env boot-device=cd:,\\ofwboot.xcf"
-	QEMUFLAGS="$OFWBOOT $IMAGE" 
-	INSTALLFLAGS="-cdrom $ISO" # CD is needed for regular running...
+    # I need the ISO or an HFS partition to boot from after installation
+    #
+#    case $OS in
+#      NetBSD)       
+	      [ "$SETUP" = "0" ] && echo "### At Boot:  type  netbsd.macppc -a">&2
+	      [ "$SETUP" = "1" ] && OFWBOOT="-prom-env boot-device=cd:,\\ofwboot.xcf"
+#        ;;
+#      OpenBSD)
+#      
+#      ;;
+#      FreeBSD)
+#      ;;
+#	   esac
+    QEMUFLAGS="$OFWBOOT $IMAGE" 
+	   INSTALLFLAGS="-cdrom $ISO" # CD is needed for regular running...
   ;;
 	sparc64)
 	QEMUFLAGS="-drive file=$IMAGE,if=ide,bus=0,unit=0"
