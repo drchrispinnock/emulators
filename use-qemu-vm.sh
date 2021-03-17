@@ -138,7 +138,6 @@ case $ARCH in
 			# NetBSD 9.0 install kernel squeezes through :-)
 			MEMORY=1G 
 			EMU="ppc"
-      echo "HERE"
 			;;
 		prep)
 			EMU="ppc"

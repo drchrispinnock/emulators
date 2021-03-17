@@ -1,0 +1,16 @@
+
+With display curses, things should just work. However some Qemu
+installations don't have this built. -nographic can be used but
+the console must be a serial one to show up. Here are the various
+ways to configuration serial consoles:
+
+OpenBSD/amd64 & i386
+--------------------
+
+# You can set the console in boot.conf 
+cjep@kernighan% cat /etc/boot.conf
+set tty com0
+
+# To log into the console make sure this is in ttys
+cjep@kernighan% grep tty00 /etc/ttys
+tty00	"/usr/libexec/getty std.9600"	vt220 on secure
