@@ -134,8 +134,6 @@ case $ARCH in
 			EMU="x86_64"
 			;;
 		macppc|powerpc)
-			# NetBSD 9.1 PRM traps on low memory
-			# NetBSD 9.0 install kernel squeezes through :-)
 			MEMORY=1G 
 			EMU="ppc"
 			;;
@@ -210,7 +208,7 @@ case $OS in
 		esac
 	;;
 	NetBSD)
-		VERS=9.1
+		VERS=9.2
 		case $ARCH in
 			i386|sparc64|sparc|amd64|hppa)
 				KNOWN=1
@@ -237,7 +235,6 @@ case $OS in
 				;;
 			macppc)
 				KNOWN=1
-				VERS=9.1
 				NEEDISO=1
 				OFWBOOT="-prom-env boot-device=cd:,\\ofwboot.xcf -prom-env boot-file=notfound" # Regular boot - for setup see later
 				;;
@@ -265,7 +262,7 @@ case $OS in
 		esac
 		;;
 		FreeBSD)
-	  	VERS=12.2
+	  	VERS=13
 			case $ARCH in
 			i386|amd64)
 				KNOWN=1
