@@ -76,6 +76,15 @@ CURSES=""
 
 SSHPORT=""
 
+# Check for prerequisites
+#
+which -s qemu-img
+if [ "$?" != "0" ]; then
+	echo "Please install Qemu" >&2
+	exit 1
+fi
+
+
 # CLI options
 #
 while [ $# -gt 0 ]; do
