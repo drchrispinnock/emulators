@@ -84,6 +84,12 @@ if [ "$?" != "0" ]; then
 	exit 1
 fi
 
+which -s curl
+if [ "$?" != "0" ]; then
+	echo "Please install Curl" >&2
+	exit 1
+fi
+
 
 # CLI options
 #
