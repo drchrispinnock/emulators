@@ -257,7 +257,7 @@ case $OS in
 		
   	;;
 	OpenBSD)
-  	VERS=6.9
+  	VERS=7.2
 		case $ARCH in
 			i386|sparc64|amd64)
 				# Supported for OpenBSD
@@ -277,7 +277,7 @@ case $OS in
 		esac
 		;;
 		FreeBSD)
-	  	VERS=13
+	  	VERS=13.1
 			case $ARCH in
 			i386|amd64)
 				KNOWN=1
