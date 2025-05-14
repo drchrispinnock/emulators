@@ -257,7 +257,7 @@ case $OS in
 		
   	;;
 	OpenBSD)
-  	VERS=7.2
+  	VERS=7.7
 		case $ARCH in
 			i386|sparc64|amd64)
 				# Supported for OpenBSD
