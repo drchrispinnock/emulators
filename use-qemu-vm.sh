@@ -223,7 +223,7 @@ case $OS in
 		esac
 	;;
 	NetBSD)
-		VERS=9.2
+		VERS=10.1
 		case $ARCH in
 			i386|sparc64|sparc|amd64|hppa)
 				KNOWN=1
