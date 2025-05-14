@@ -9,6 +9,7 @@ mop up and keep all the pieces.
 MANY OTHER COMBINATIONS WORK. THE PURPOSE OF THIS SCRIPT IS TO PROVIDE
 KNOWN GOOD INSTALLATION AND BOOT PARAMETERS.
 
+```
         NetBSD  OpenBSD FreeBSD DragonFly Solaris Debian Plan9 Minix
 ------------------------------------------------------------------------
 amd64   qemu    qemu    qemu    qemu%     +++     qemu   qmu^^ qemu
@@ -39,11 +40,13 @@ vax	simh
 ^^^ OpenBSD/hppa asks for boot device on normal boot and gets stuck
     on pf. Boot single user and disable it in /etc/rc.conf.local
 %   Installer gets stuck on both 5.8.2 and 5.8.3. Needs work.
+```
 
 ------------------------------------------------------------------------
 1. Qemu
 ------------------------------------------------------------------------
 
+```
 use-qemu-vm.sh [-i] [-c] [-n] [-d] [-t TargetDir] [OS [arch [ver]]]
  -i run installer ISO (i.e. setup)
  -P port - setup port forwarding from port to 22 (then you can
@@ -86,6 +89,7 @@ use-qemu-vm.sh [-i] [-c] [-n] [-d] [-t TargetDir] [OS [arch [ver]]]
    * The script deposits a script called boot.sh in the VM directory
    which contains the command last used to boot the VM. So if you 
    are happy with the last run, you can use this script going forward.
+```
 
 CTRL-C will kill an qemu if it is running in a graphics window.
 CTRL-A x will exit a qemu running in nographic mode.
@@ -117,7 +121,7 @@ https://archive.org/download/solaris8_703sparc/Solaris%208%20Installation%20HW%2
 * NetBSD/macppc is slightly more involved:
       When booting normally the first time after installation, I've setup the boot to fail to drop to the boot prompt. To boot type:
 
-      netbsd.macppc -a
+      ```netbsd.macppc -a```
 
       The -a will instruct netbsd to ask you for the root filesystem 
       - use wd0a. This will get you a working system, but it is the install
@@ -133,9 +137,11 @@ https://archive.org/download/solaris8_703sparc/Solaris%208%20Installation%20HW%2
       https://cp1888.files.wordpress.com/2021/03/netbsd-boot-macppc-9.iso_.zip
       
       Download the ISO and use this the boot the VM without any Openboot hassle:
-      
-      cd ...where.the.vm.is...
-      qemu-system-ppc -m 1G -nographic -cdrom NetBSD-Boot-macppc-9.iso -net user,ipv6=no -net nic -boot c -prom-env boot-device=cd:,\ofwboot.xcf -prom-env boot-file=netbsd9.wd0 netbsd-disk-macppc.img
+     
+```
+cd ...where.the.vm.is...
+qemu-system-ppc -m 1G -nographic -cdrom NetBSD-Boot-macppc-9.iso -net user,ipv6=no -net nic -boot c -prom-env boot-device=cd:,\ofwboot.xcf -prom-env boot-file=netbsd9.wd0 netbsd-disk-macppc.img
+```
       
       Replace netbsd9.wd0 with netbsd91.wd0 for a 9.1 kernel.
 
@@ -193,7 +199,10 @@ graphics options easily if you prefer not to run headless
 3. Gxemul
 ------------------------------------------------------------------------
 
+```
 ./use-gxemul-vm.sh [-i] [OS [arch]]
+```
+
 will setup a VM running on gxemul on the first run (or with -i)
 and will run it if it is setup already.
 
@@ -214,7 +223,10 @@ The following don't work:
 4. Simh & NetBSD/vax
 ------------------------------------------------------------------------
 
+```
 ./use-simh-vm.sh [-i]
+```
+
 * Will help setup a NetBSD/vax virtual machine with SIMH
 * SIMH needs to be installed first
 * The first time you will need to type boot dua1:     
